@@ -1,6 +1,4 @@
-﻿Imports ClosedXML.Excel
-Imports System.Text.RegularExpressions
-Module Module1
+﻿Module Module1
 
     Sub Main()
         Dim ExcelApp = New Microsoft.Office.Interop.Excel.Application
