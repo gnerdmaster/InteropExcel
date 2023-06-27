@@ -12,7 +12,7 @@
 
         Dim C As New Cell
         C.XlsApp = ExcelApp
-        C.infohoja = infoSheet
+        C.infoSheet = infoSheet
 
         ''------------COMMON FORMATS (PRINCIPALES)---------
         C.Cell("Sin formato", 2, C.N("B"), 2, C.N("C")) 'FORMA 1 de crear una celda
@@ -25,6 +25,7 @@
 
         C.Cell("EJEMPLO DE REDUCCIÓN DE CÓDIGO EN BORDES", "B7:D7", "border-left:dot; border-right:continuous; border-bottom: dashdotdot")
 
+        ''----------ALINEACIONES------------
         C.Cell("TEST ALIGNMENT", "B9:E9", "text-align: center; vertical-align:none")
 
         ''----------FÓRMULAS----------------
@@ -47,7 +48,7 @@
         C.Cell("border-top: dot", "G4", "border-top: dot")          'borde superior
         C.Cell("border-right: dash", "G5", "border-right: dash")    'borde derecho
         C.Cell("border-bottom: dashdot", "G6", "border-bottom: dashdot")          'borde inferior
-        ''------------COLORES------------------
+        ''------------COLORES DE FONDO------------------
         C.Cell("background-color: yellow", "I1", "background-color: yellow")
         C.Cell("background-color: #A0F0D0", "I2", "background-color: #A0F0D0")
         C.Cell("background-color: rgb(50,10,200)", "I3", "background-color: rgb(50,10,200)")
@@ -70,15 +71,19 @@
         C.Cell(Nothing, "<i>J12:K15", "border: dash; background-color: #F0F0F0; font-style: underline-double bold")                                                                             'formateo sin convinación de celdas y border interiores por default(no declarados en las configuraciones)
         C.Cell(Nothing, "<i>J21:L24", "border-inside-horizontal: continuous; border-inside-vertical: dot;border: double; background-color: red; font-style: underline-doubleaccount")           'formateo sin convinación de celdas y bordes interiores configurados y mostrados
 
-
-
+        ''-----------COLORES DE FUENTE DE LETRA-------------
+        C.Cell("color: red", "M2", "color: red")
+        C.Cell("color: #0E2FC3", "M3", "color: #0E2FC3")
+        C.Cell("color: rgb(174, 241, 71)", "M4", "color: rgb(174, 241, 71)")
+        ''-----------RICH TEXT (HTML EN LA CELDA)----------
+        'C.Cell("<h>Hola mundo</h><u>underline</u> HTML en <b>TODOS lados</b>", "L2:M2") --pendiente
+        ''-----------CELL VERSIÓN 4 (CREACIÓN DE UNA TABLA)
 
 
 
 
         'Siguientes mejoras:
         '1.- Bordes de colores
-        '2.- Color de fuente de letra
         '3.- HTML dentro de la celda
         '4.- Controlar el grosor de los bordes
         '5.- Orientación de Texto

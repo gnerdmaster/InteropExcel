@@ -57,6 +57,7 @@ Public Class Dictionary
                 {"font-size", 8},                       'FONT - Tamaño de letra en número
                 {"font-family", "Arial"},               'FONT - [Arial, San Serif, Helvetica, Calibri, ...] (múltiples opciones, con orden de existencia, separados por una coma)
                 {"font-style", "normal"},               'FONT - [normal, bold, italic, underline] (multiples configuraciones separados por un espacio)                     
+                {"color", "none"},                      'FONT - examples[green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
                 {"italic", False},                      'FONT - [true, false]
                 {"bold", False},                        'FONT - [true, false]
                 {"underline", "none"},                  'FONT - [none, double, doubleaccount, single]
@@ -67,7 +68,7 @@ Public Class Dictionary
                 {"vertical-align", "top"},              'ALIGNMENT - [none, top, middle, bottom]
                 {"text-wrap", False},                   'ALIGNMENT - [true, false]
                 {"number-format", "General"},           'NUMBER FORMAT - [@ = text, General, Estándar, 'for:mat0 personalizad0']    Otros formatos, consultar este link: https://support.microsoft.com/es-es/office/c%C3%B3digos-de-formato-de-n%C3%BAmero-5026bbd6-04bc-48cd-bf33-80f18b4eae68?ui=es-es&rs=es-hn&ad=us
-                {"background-color", "none"}            'FILL - [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
+                {"background-color", "none"}            'FILL - examples[green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
             }
             Exit Property
         End Get

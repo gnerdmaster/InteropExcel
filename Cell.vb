@@ -4,7 +4,7 @@ Imports System.Drawing
 Public Class Cell
 #Region "Parámetros"
     Public XlsApp As Microsoft.Office.Interop.Excel.Application
-    Public infohoja As DataWorksheet
+    Public infoSheet As DataWorksheet
 #End Region
 
 #Region "Constantes"
@@ -69,7 +69,7 @@ Public Class Cell
     ''' <param name="Cell_Final"></param>
     ''' <param name="Configurations"></param>
     Public Sub Cell(ByVal Value As String, ByVal Cell_Init As String, Cell_Final As String, ByVal Optional Configurations As String = "")
-        With XlsApp.Worksheets(infohoja.SheetName)
+        With XlsApp.Worksheets(infoSheet.SheetName)
             Dim IsMerge As Boolean = True       'es celda convinada?
 
             If Value IsNot Nothing Then
@@ -346,6 +346,8 @@ Public Class Cell
     ''' <param name="CellRange"></param>
     Private Sub ConfigurationExecution(_CellConfig As Dictionary(Of String, String), CellRange As Microsoft.Office.Interop.Excel.Range, Optional RangeNotMergeConfigurationNivel As String = "range")
         Try
+            Dim regxARGB As String = "^(a?rgb)?\(?([01]?\d\d?|2[0-4]\d|25[0-5])(\W+)([01]?\d\d?|2[0-4]\d|25[0-5])\W+(([01]?\d\d?|2[0-4]\d|25[0-5])\)?)$"
+
             'BORDERS
             Dim BorderEnumerations As Dictionary(Of Short, String) = Dictionary.NameAndEnumerationBorders
             If RangeNotMergeConfigurationNivel = "cell" Then
@@ -377,6 +379,15 @@ Public Class Cell
             CellRange.Font.Italic = FontStyleType(_CellConfig("font-style"), "italic", _CellConfig)  'Boolean.Parse(If(_CellConfig("font-style") = "italic", True, _CellConfig("italic")))
             CellRange.Font.Underline = FontStyleType(_CellConfig("font-style"), "underline", _CellConfig)
             CellRange.Font.Size = Short.Parse(_CellConfig("font-size"))
+            If (_CellConfig("color") <> "none") Then
+                If (_CellConfig("color").IndexOf("#") = 0) Then      'https://stackoverflow.com/questions/7423456/changing-an-excel-cells-backcolor-using-hex-results-in-excel-displaying-complet
+                    CellRange.Font.Color = FillType(_CellConfig("color"), "color-hex")
+                ElseIf Regex.IsMatch(_CellConfig("color"), regxARGB) Then
+                    CellRange.Font.Color = FillType(_CellConfig("color"), "color-rgb")
+                Else
+                    CellRange.Font.ColorIndex = FillType(_CellConfig("color"), "color-palette")
+                End If
+            End If
 
             'ALIGNMENT
             CellRange.HorizontalAlignment = AlignmentType(_CellConfig("text-align"))
@@ -389,7 +400,6 @@ Public Class Cell
             End If
 
             'FILL
-            Dim regxARGB As String = "^(a?rgb)?\(?([01]?\d\d?|2[0-4]\d|25[0-5])(\W+)([01]?\d\d?|2[0-4]\d|25[0-5])\W+(([01]?\d\d?|2[0-4]\d|25[0-5])\)?)$"
             If (_CellConfig("background-color") <> "none") Then
                 If (_CellConfig("background-color").IndexOf("#") = 0) Then      'https://stackoverflow.com/questions/7423456/changing-an-excel-cells-backcolor-using-hex-results-in-excel-displaying-complet
                     CellRange.Interior.Color = FillType(_CellConfig("background-color"), "color-hex")
@@ -543,7 +553,7 @@ Public Class Cell
         ElseIf type = "color-hex" Then
             result = New ColorConverter().ConvertFromString(value)
         ElseIf type = "color-rgb" Then
-            Dim regx As String = "[0-255]+"
+            Dim regx As String = "[0-9]+"
             Dim R As Short = 0
             Dim G As Short = 0
             Dim B As Short = 0
