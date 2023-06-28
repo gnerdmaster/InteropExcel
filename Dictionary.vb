@@ -52,12 +52,19 @@ Public Class Dictionary
                 {"border-right", "linestylenone"},      'BORDER - [continuous, dash, dashdot, dashdotdot, dot, double, linestylenone, slantdashdot]
                 {"border-top", "linestylenone"},        'BORDER - [continuous, dash, dashdot, dashdotdot, dot, double, linestylenone, slantdashdot]
                 {"border-bottom", "linestylenone"},     'BORDER - [continuous, dash, dashdot, dashdotdot, dot, double, linestylenone, slantdashdot]
-                {"border-inside-horizontal", "linestylenone"},      'BORDER - [continuous, dash, dashdot, dashdotdot, dot, double, linestylenone, slantdashdot]
-                {"border-inside-vertical", "linestylenone"},        'BORDER - [continuous, dash, dashdot, dashdotdot, dot, double, linestylenone, slantdashdot]
+                {"border-inside-horizontal", "linestylenone"},   'BORDER - [continuous, dash, dashdot, dashdotdot, dot, double, linestylenone, slantdashdot]
+                {"border-inside-vertical", "linestylenone"},     'BORDER - [continuous, dash, dashdot, dashdotdot, dot, double, linestylenone, slantdashdot]
+                {"border-color", "none"},               'BORDER - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
+                {"border-left-color", "none"},          'BORDER - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
+                {"border-right-color", "none"},         'BORDER - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
+                {"border-top-color", "none"},           'BORDER - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
+                {"border-bottom-color", "none"},        'BORDER - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
+                {"border-inside-horizontal-color", "none"},     'BORDER - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
+                {"border-inside-vertical-color", "none"},       'BORDER - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
                 {"font-size", 8},                       'FONT - Tamaño de letra en número
                 {"font-family", "Arial"},               'FONT - [Arial, San Serif, Helvetica, Calibri, ...] (múltiples opciones, con orden de existencia, separados por una coma)
                 {"font-style", "normal"},               'FONT - [normal, bold, italic, underline] (multiples configuraciones separados por un espacio)                     
-                {"color", "none"},                      'FONT - examples[green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
+                {"color", "none"},                      'FONT - (namecolor, hexdecimal format, rgb format) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
                 {"italic", False},                      'FONT - [true, false]
                 {"bold", False},                        'FONT - [true, false]
                 {"underline", "none"},                  'FONT - [none, double, doubleaccount, single]
@@ -68,7 +75,7 @@ Public Class Dictionary
                 {"vertical-align", "top"},              'ALIGNMENT - [none, top, middle, bottom]
                 {"text-wrap", False},                   'ALIGNMENT - [true, false]
                 {"number-format", "General"},           'NUMBER FORMAT - [@ = text, General, Estándar, 'for:mat0 personalizad0']    Otros formatos, consultar este link: https://support.microsoft.com/es-es/office/c%C3%B3digos-de-formato-de-n%C3%BAmero-5026bbd6-04bc-48cd-bf33-80f18b4eae68?ui=es-es&rs=es-hn&ad=us
-                {"background-color", "none"}            'FILL - examples[green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
+                {"background-color", "none"}            'FILL - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
             }
             Exit Property
         End Get

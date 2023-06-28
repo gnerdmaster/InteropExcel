@@ -75,6 +75,19 @@
         C.Cell("color: red", "M2", "color: red")
         C.Cell("color: #0E2FC3", "M3", "color: #0E2FC3")
         C.Cell("color: rgb(174, 241, 71)", "M4", "color: rgb(174, 241, 71)")
+        ''-----------COLORES DE BORDERS--------------------
+        C.Cell("border: continuous; border-color: blue", "M6", "border: continuous; border-color: blue")
+        C.Cell("border: continuous; border-color: #F0F0F0", "M8", "border: continuous; border-color: #F0F0F0")
+        C.Cell("border: continuous; border-color: rgb(255,100,25)", "M10", "border: continuous; border-color: rgb(255,100,25)")
+
+        C.Cell("border-left: double; border-color:yellow", "M12", "border-left: double; border-color:yellow")
+        C.Cell("border-left: double; border-bottom: dashdotdot; border-color: pink", "M14", "border-left: double; border-bottom: dashdotdot; border-color: pink")
+
+        C.Cell("border: double; border-left-color: blue; border-top-color: yellow", "m16", "border: double; border-left-color: blue; border-top-color: yellow")
+
+        C.Cell("border: double; border-color: yellow; border-bottom-color: blue; border-inside-vertical-color: red", "<i>M18:N20", "border: double; border-color: yellow; border-bottom-color: blue; border-inside-vertical-color: red")
+
+
         ''-----------RICH TEXT (HTML EN LA CELDA)----------
         'C.Cell("<h>Hola mundo</h><u>underline</u> HTML en <b>TODOS lados</b>", "L2:M2") --pendiente
         ''-----------CELL VERSIÓN 4 (CREACIÓN DE UNA TABLA)
@@ -83,7 +96,6 @@
 
 
         'Siguientes mejoras:
-        '1.- Bordes de colores
         '3.- HTML dentro de la celda
         '4.- Controlar el grosor de los bordes
         '5.- Orientación de Texto
@@ -94,6 +106,7 @@
         '10.- (Fuente) Efecto Subíndice
         '11.- (Color Fondo) Efectos de relleno, Color de Trama, Estilo de Trama
         '12.- Sección Proteger (Bloqueada, Oculta)
+        '14.- Ajustar interpretación del key border y sus derivados para apegarse a css
 
 
         'Siguientes propuestas

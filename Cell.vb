@@ -218,125 +218,129 @@ Public Class Cell
     ''' <param name="_CellConfig"></param>
     ''' <param name="Configurations"></param>
     Private Sub LexicalInterpreter(_CellConfig As Dictionary(Of String, String), Optional Configurations As String = "")
-        If (Configurations <> "") Then
-            Dim _regx_bracket As String = "a?rgb\s*\((\s*\d{1,3}\s*,?)+\)"                  'Configuración entre paréntesis para no afectar los splits con comas y otra manera
-            Dim _regx_string As String = "([""'])(.*?)\1"      'Expresión regular para la sustitución de los valores tipo string (entre comillas sencillas o dobles)
+        Try
+            If (Configurations <> "") Then
+                Dim _regx_bracket As String = "a?rgb\s*\((\s*\d{1,3}\s*,?)+\)"                  'Configuración entre paréntesis para no afectar los splits con comas y otra manera
+                Dim _regx_string As String = "([""'])(.*?)\1"      'Expresión regular para la sustitución de los valores tipo string (entre comillas sencillas o dobles)
 
-            'reunir coincidencias dentro de "" ó ''
-            Dim outputConfigBrackets As MatchCollection = Regex.Matches(Configurations, _regx_bracket)
-            Dim outputConfigStrings As MatchCollection = Regex.Matches(Configurations, _regx_string)
+                'reunir coincidencias dentro de "" ó ''
+                Dim outputConfigBrackets As MatchCollection = Regex.Matches(Configurations, _regx_bracket)
+                Dim outputConfigStrings As MatchCollection = Regex.Matches(Configurations, _regx_string)
 
-            'almacenarnos en una lista con sus futuras sustituciones (palabras reservadas)
-            Dim ConfigStringsDictionary As New Dictionary(Of String, String)
+                'almacenarnos en una lista con sus futuras sustituciones (palabras reservadas)
+                Dim ConfigStringsDictionary As New Dictionary(Of String, String)
 
-            Dim i As Integer = 1            'iteración para las sustituciones
-            Dim substitution As String, _configBracket As String, _configString As String
+                Dim i As Integer = 1            'iteración para las sustituciones
+                Dim substitution As String, _configBracket As String, _configString As String
 
-            'Sustitución de los paréntesis
-            For Each configBracket As Match In outputConfigBrackets
-                substitution = $"_confgbrack_{i}_"
-                _configBracket = configBracket.Value
-                ConfigStringsDictionary.Add(substitution, _configBracket)
+                'Sustitución de los paréntesis
+                For Each configBracket As Match In outputConfigBrackets
+                    substitution = $"_confgbrack_{i}_"
+                    _configBracket = configBracket.Value
+                    ConfigStringsDictionary.Add(substitution, _configBracket)
 
-                'sustituímos la cadena por una palabra de sustitución
-                Configurations = Replace(Configurations, _configBracket, substitution)
-                i += 1
-            Next
+                    'sustituímos la cadena por una palabra de sustitución
+                    Configurations = Replace(Configurations, _configBracket, substitution)
+                    i += 1
+                Next
 
-            'Sustitución de las cadenas de texto
-            i = 1
-            For Each configString As Match In outputConfigStrings
-                substitution = $"_confgstr_{i}_"
-                _configString = configString.Value
-                ConfigStringsDictionary.Add(substitution, _configString)
+                'Sustitución de las cadenas de texto
+                i = 1
+                For Each configString As Match In outputConfigStrings
+                    substitution = $"_confgstr_{i}_"
+                    _configString = configString.Value
+                    ConfigStringsDictionary.Add(substitution, _configString)
 
-                'sustituímos la cadena por una palabra de sustitución
-                Configurations = Replace(Configurations, _configString, substitution)
-                i += 1
-            Next
+                    'sustituímos la cadena por una palabra de sustitución
+                    Configurations = Replace(Configurations, _configString, substitution)
+                    i += 1
+                Next
 
-            Configurations = Configurations.ToLower()       'con las configuraciones ya seteadas ya podemos convertirlo a minúsculas
+                Configurations = Configurations.ToLower()       'con las configuraciones ya seteadas ya podemos convertirlo a minúsculas
 
-            'SEPARADOR - NIVEL 1 (;)
-            Dim nivel_1() As String = Configurations.Split(";")
+                'SEPARADOR - NIVEL 1 (;)
+                Dim nivel_1() As String = Configurations.Split(";")
 
-            Dim nivel_2() As String
-            Dim key As String, value As String
-            For Each nivel1 In nivel_1
+                Dim nivel_2() As String
+                Dim key As String, value As String
+                For Each nivel1 In nivel_1
 
-                'SEPARADOR - NIVEL 2 (:)
-                nivel_2 = nivel1.Split(":")
+                    'SEPARADOR - NIVEL 2 (:)
+                    nivel_2 = nivel1.Split(":")
 
-                key = Trim(nivel_2(0))
-                value = Trim(nivel_2(1))
+                    key = Trim(nivel_2(0))
+                    value = Trim(nivel_2(1))
 
-                '-----------SEPARADORES - NIVEL 3-----------
-                'Primera validación(MULTIPLES OPCIONES) en value (¿hay comas?, si hay entonces ... split(","))
-                If value.Contains(",") Then
+                    '-----------SEPARADORES - NIVEL 3-----------
+                    'Primera validación(MULTIPLES OPCIONES) en value (¿hay comas?, si hay entonces ... split(","))
+                    If value.Contains(",") Then
 
-                    '¿hay espacios en blanco? => borrarlos, porque o es multiple opción o es multiple configuración, no puedes servir a dos señores
-                    value = Replace(value, " ", "")
+                        '¿hay espacios en blanco? => borrarlos, porque o es multiple opción o es multiple configuración, no puedes servir a dos señores
+                        value = Replace(value, " ", "")
 
-                    Dim valueKeyOptions() As String = value.Split(",")
-                    Dim _valueKeyOptions() As String = Array.Empty(Of String)()
-                    Dim iko As Integer = 0      'iterador para keyOption
-                    'Limpiando las opciones
-                    For Each keyOption In valueKeyOptions
-                        keyOption = Trim(keyOption)
-                        keyOption = If(ConfigStringsDictionary.ContainsKey(keyOption), ConfigStringsDictionary(keyOption), keyOption)
-                        keyOption = Replace(Replace(keyOption, """", ""), "'", "")            'esta cadena de texto no soporta " (comillas dobles) ni '(comillas sencillas) porque hacemos un replace sobre ella, en caso que se necesite, edítalo
+                        Dim valueKeyOptions() As String = value.Split(",")
+                        Dim _valueKeyOptions() As String = Array.Empty(Of String)()
+                        Dim iko As Integer = 0      'iterador para keyOption
+                        'Limpiando las opciones
+                        For Each keyOption In valueKeyOptions
+                            keyOption = Trim(keyOption)
+                            keyOption = If(ConfigStringsDictionary.ContainsKey(keyOption), ConfigStringsDictionary(keyOption), keyOption)
+                            keyOption = Replace(Replace(keyOption, """", ""), "'", "")            'esta cadena de texto no soporta " (comillas dobles) ni '(comillas sencillas) porque hacemos un replace sobre ella, en caso que se necesite, edítalo
 
-                        'Aquí va el procedimiento par las MULTIPLES OPCIONES (hasta ahora no se ha utilizado esta funcionalidad sin embargo dejamos un ejemplo)
-                        'Ejemplo:
-                        'font-family: 'Helvetica', 'San serif', 'Arial'
-                        'Si no encuentra la fuente de letra Helvetica, que le ponga San serif, y si no se encuentra San serif, entonces ponle Arial, ya qué :/
+                            'Aquí va el procedimiento par las MULTIPLES OPCIONES (hasta ahora no se ha utilizado esta funcionalidad sin embargo dejamos un ejemplo)
+                            'Ejemplo:
+                            'font-family: 'Helvetica', 'San serif', 'Arial'
+                            'Si no encuentra la fuente de letra Helvetica, que le ponga San serif, y si no se encuentra San serif, entonces ponle Arial, ya qué :/
 
-                        _valueKeyOptions(iko) = keyOption
+                            _valueKeyOptions(iko) = keyOption
 
-                        iko += 1
-                    Next
+                            iko += 1
+                        Next
 
-                    'Si son muchas opciones => conseguir la opcion más cercana y disponible
-                    If _CellConfig.ContainsKey(key) And _valueKeyOptions.Length > 1 Then
-                        value = GetOptionConfigAvailableValue(key, _valueKeyOptions)
-                    Else
-                        Console.WriteLine($"key not found for validate (keyOption): {key}")
-                    End If
-                End If
-
-                'Segunda validación(MULTIPLES CONFIGURACIONES) en value (¿hay espacios en blanco?, si hay entonces ... split(" "))
-                If value.Contains(" ") Then
-                    Dim valueKeyConfig() As String = Regex.Split(value, "\s+").ToArray()
-
-                    'Configuraciones individuales
-                    For Each keyConfig In valueKeyConfig
-                        keyConfig = Trim(keyConfig)
-                        keyConfig = If(ConfigStringsDictionary.ContainsKey(keyConfig), ConfigStringsDictionary(keyConfig), keyConfig)
-                        keyConfig = Replace(Replace(keyConfig, """", ""), "'", "")            'esta cadena de texto no soporta " (comillas dobles) ni '(comillas sencillas) porque hacemos un replace sobre ella, en caso que se necesite, edítalo
-
-                        'Hacer aquí el procedimiento de MULTIPLES CONFIGURACIONES (éstas keyConfig mayormente son True, False)
-                        If _CellConfig.ContainsKey(keyConfig) Then
-                            _CellConfig(keyConfig) = GetKeyConfigDefaultValue(keyConfig, key)
+                        'Si son muchas opciones => conseguir la opcion más cercana y disponible
+                        If _CellConfig.ContainsKey(key) And _valueKeyOptions.Length > 1 Then
+                            value = GetOptionConfigAvailableValue(key, _valueKeyOptions)
                         Else
-                            Console.WriteLine($"keyConfig not found: {keyConfig}")
+                            Console.WriteLine($"key not found for validate (keyOption): {key}")
                         End If
-                    Next
+                    End If
 
-                End If
-                '---------FIN SEPARADORES - NIVEL 3-----------
+                    'Segunda validación(MULTIPLES CONFIGURACIONES) en value (¿hay espacios en blanco?, si hay entonces ... split(" "))
+                    If value.Contains(" ") Then
+                        Dim valueKeyConfig() As String = Regex.Split(value, "\s+").ToArray()
+
+                        'Configuraciones individuales
+                        For Each keyConfig In valueKeyConfig
+                            keyConfig = Trim(keyConfig)
+                            keyConfig = If(ConfigStringsDictionary.ContainsKey(keyConfig), ConfigStringsDictionary(keyConfig), keyConfig)
+                            keyConfig = Replace(Replace(keyConfig, """", ""), "'", "")            'esta cadena de texto no soporta " (comillas dobles) ni '(comillas sencillas) porque hacemos un replace sobre ella, en caso que se necesite, edítalo
+
+                            'Hacer aquí el procedimiento de MULTIPLES CONFIGURACIONES (éstas keyConfig mayormente son True, False)
+                            If _CellConfig.ContainsKey(keyConfig) Then
+                                _CellConfig(keyConfig) = GetKeyConfigDefaultValue(keyConfig, key)
+                            Else
+                                Console.WriteLine($"keyConfig not found: {keyConfig}")
+                            End If
+                        Next
+
+                    End If
+                    '---------FIN SEPARADORES - NIVEL 3-----------
 
 
-                'Seteamos todas las configuraciones key:value
-                If _CellConfig.ContainsKey(key) Then
-                    value = If(ConfigStringsDictionary.ContainsKey(value), ConfigStringsDictionary(value), value)
-                    value = Replace(Replace(value, """", ""), "'", "")
-                    _CellConfig(key) = value
-                Else
-                    Console.WriteLine($"key not found: {key}")
-                End If
+                    'Seteamos todas las configuraciones key:value
+                    If _CellConfig.ContainsKey(key) Then
+                        value = If(ConfigStringsDictionary.ContainsKey(value), ConfigStringsDictionary(value), value)
+                        value = Replace(Replace(value, """", ""), "'", "")
+                        _CellConfig(key) = value
+                    Else
+                        Console.WriteLine($"key not found: {key}")
+                    End If
 
-            Next
-        End If
+                Next
+            End If
+        Catch ex As Exception
+
+        End Try
     End Sub
 
     ''' <summary>
@@ -360,16 +364,48 @@ Public Class Cell
                 BorderEnumerations.Remove(xlInsideHorizontal)
             End If
 
+            Dim borderColor As String = ""
             Dim allBorders As Boolean = BorderType(_CellConfig("border")) <> xlLineStyleNone
             If allBorders Then
                 For Each borderEnumeration In BorderEnumerations
                     CellRange.Borders(borderEnumeration.Key).LineStyle = BorderType(_CellConfig("border"))
+
+                    borderColor = "border-color"
+                    If (_CellConfig(borderColor) <> "none") Then
+                        If (_CellConfig(borderColor).IndexOf("#") = 0) Then      'https://stackoverflow.com/questions/7423456/changing-an-excel-cells-backcolor-using-hex-results-in-excel-displaying-complet
+                            CellRange.Borders(borderEnumeration.Key).Color = FillType(_CellConfig(borderColor), "color-hex")
+                        ElseIf Regex.IsMatch(_CellConfig(borderColor), regxARGB) Then
+                            CellRange.Borders(borderEnumeration.Key).Color = FillType(_CellConfig(borderColor), "color-rgb")
+                        Else
+                            CellRange.Borders(borderEnumeration.Key).ColorIndex = FillType(_CellConfig(borderColor), "color-palette")
+                        End If
+                    End If
                 Next
             End If
             'configuración individual de los borders
             For Each border In BorderEnumerations   'Name = Value And Enumeration = Key
                 If BorderType(_CellConfig(border.Value)) <> xlLineStyleNone Then
                     CellRange.Borders(border.Key).LineStyle = BorderType(_CellConfig(border.Value))
+                End If
+
+                borderColor = $"{border.Value}-color"
+                If (_CellConfig(borderColor) <> "none") Then
+                    If (_CellConfig(borderColor).IndexOf("#") = 0) Then      'https://stackoverflow.com/questions/7423456/changing-an-excel-cells-backcolor-using-hex-results-in-excel-displaying-complet
+                        CellRange.Borders(border.Key).Color = FillType(_CellConfig(borderColor), "color-hex")
+                    ElseIf Regex.IsMatch(_CellConfig(borderColor), regxARGB) Then
+                        CellRange.Borders(border.Key).Color = FillType(_CellConfig(borderColor), "color-rgb")
+                    Else
+                        CellRange.Borders(border.Key).ColorIndex = FillType(_CellConfig(borderColor), "color-palette")
+                    End If
+                ElseIf _CellConfig("border-color") <> "none" Then
+                    borderColor = "border-color"
+                    If (_CellConfig(borderColor).IndexOf("#") = 0) Then      'https://stackoverflow.com/questions/7423456/changing-an-excel-cells-backcolor-using-hex-results-in-excel-displaying-complet
+                        CellRange.Borders(border.Key).Color = FillType(_CellConfig(borderColor), "color-hex")
+                    ElseIf Regex.IsMatch(_CellConfig(borderColor), regxARGB) Then
+                        CellRange.Borders(border.Key).Color = FillType(_CellConfig(borderColor), "color-rgb")
+                    Else
+                        CellRange.Borders(border.Key).ColorIndex = FillType(_CellConfig(borderColor), "color-palette")
+                    End If
                 End If
             Next
 
