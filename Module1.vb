@@ -43,11 +43,45 @@
         C.Cell("Merge F:F", "F:F")
 
         ''------------BORDERS---------
-        C.Cell("border: continuous", "G2", "border: continuous")    'todos los bordes y una configuración
-        C.Cell("border-left: double", "G3", "border-left: double")  'borde izquierdo
-        C.Cell("border-top: dot", "G4", "border-top: dot")          'borde superior
-        C.Cell("border-right: dash", "G5", "border-right: dash")    'borde derecho
-        C.Cell("border-bottom: dashdot", "G6", "border-bottom: dashdot")          'borde inferior
+        Dim borderStyleIndividual As String = "border-top-style: continuous; border-right-style:continuous; border-bottom-style: continuous; border-left-style: double"
+        C.Cell(borderStyleIndividual, "G2", borderStyleIndividual)     'border-style individual
+
+        'Estilo de border: continuous (solid), double, dot (dotted), dash (dashed), etc
+        C.Cell("border-style: continuous", "G4", "border-style: continuous")
+        C.Cell("border-style: continuous double", "G6", "border-style: continuous double")
+        C.Cell("border-style: continuous double dot", "G8", "border-style: continuous double dot")
+        C.Cell("border-style: continuous double dot dash", "G10", "border-style: continuous double dot dash")
+
+        'Ancho de border: hairline (super delgado), thin (delgado), medium (medio), thick (ancho) :::: al parecer no soporta thick
+        C.Cell("hairline, medium, thick, thin", "G12", "border-top-width: hairline")
+        C.Cell("hairline, medium, thick, thin", "G12", "border-right-width: medium")
+        C.Cell("hairline, medium, thick, thin", "G12", "border-bottom-width: thick")
+        C.Cell("hairline, medium, thick, thin", "G12", "border-left-width: thin")
+
+        'border-width: css
+        C.Cell("border-width: medium", "G14", "border-width: medium")
+        C.Cell("border-width: medium thick", "G16", "border-width: medium thick")
+        C.Cell("border-width: medium thick thin", "G18", "border-width: medium thick thin")
+        C.Cell("border-width: medium thick thin hairline", "G20", "border-width: medium thick thin hairline")
+
+        'border-color: css
+        C.Cell("border-color: yellow", "G22", "border-color: yellow")
+        C.Cell("border-color: yellow #FF0000", "G24", "border-color: yellow #FF0000")
+        C.Cell("border-color: yellow #FF0000 rgb(103, 49, 71)", "G26", "border-color: yellow #FF0000 rgb(103, 49, 71)")
+        C.Cell("border-color: yellow #FF0000 rgb(103, 49, 71) blue", "G28", "border-color: yellow #FF0000 rgb(103, 49, 71) blue")
+
+        'border-top (css)
+        'border-right (css)
+        'border-bottom (css)
+        'border-left (css)
+        C.Cell("border-top: rgb(120,120,120) thin dashed; border-right: medium blue dotted; border-bottom: thick #00FF00; border-left: solid", "G30", "border-top: rgb(120,120,120) thin dashed; border-right: medium blue dotted; border-bottom: thick #00FF00; border-left: solid")
+
+        'border: css    
+        C.Cell("border: dashed blue medium", "G32", "border: dashed blue medium")
+        C.Cell("border: medium dashed rgb(125,125,125)", "G34", "border: medium dashed rgb(125,125,125)")
+        C.Cell("border: double #00FF00 thin", "G36", "border: double #00FF00 thin")
+
+
         ''------------COLORES DE FONDO------------------
         C.Cell("background-color: yellow", "I1", "background-color: yellow")
         C.Cell("background-color: #A0F0D0", "I2", "background-color: #A0F0D0")
@@ -97,7 +131,7 @@
 
         'Siguientes mejoras:
         '3.- HTML dentro de la celda
-        '4.- Controlar el grosor de los bordes
+        '4.- Controlar el grosor de los bordes (listo)
         '5.- Orientación de Texto
         '6.- Sangría de Texto
         '7.- Reducir Hasta ajustar(texto)
@@ -106,7 +140,7 @@
         '10.- (Fuente) Efecto Subíndice
         '11.- (Color Fondo) Efectos de relleno, Color de Trama, Estilo de Trama
         '12.- Sección Proteger (Bloqueada, Oculta)
-        '14.- Ajustar interpretación del key border y sus derivados para apegarse a css
+        '14.- Ajustar interpretación del key border y sus derivados para apegarse a css (listo border y sus derivados)
 
 
         'Siguientes propuestas

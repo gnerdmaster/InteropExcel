@@ -272,69 +272,18 @@ Public Class Cell
                     value = Trim(nivel_2(1))
 
                     '-----------SEPARADORES - NIVEL 3-----------
-                    'Primera validación(MULTIPLES OPCIONES) en value (¿hay comas?, si hay entonces ... split(","))
-                    If value.Contains(",") Then
-
-                        '¿hay espacios en blanco? => borrarlos, porque o es multiple opción o es multiple configuración, no puedes servir a dos señores
-                        value = Replace(value, " ", "")
-
-                        Dim valueKeyOptions() As String = value.Split(",")
-                        Dim _valueKeyOptions() As String = Array.Empty(Of String)()
-                        Dim iko As Integer = 0      'iterador para keyOption
-                        'Limpiando las opciones
-                        For Each keyOption In valueKeyOptions
-                            keyOption = Trim(keyOption)
-                            keyOption = If(ConfigStringsDictionary.ContainsKey(keyOption), ConfigStringsDictionary(keyOption), keyOption)
-                            keyOption = Replace(Replace(keyOption, """", ""), "'", "")            'esta cadena de texto no soporta " (comillas dobles) ni '(comillas sencillas) porque hacemos un replace sobre ella, en caso que se necesite, edítalo
-
-                            'Aquí va el procedimiento par las MULTIPLES OPCIONES (hasta ahora no se ha utilizado esta funcionalidad sin embargo dejamos un ejemplo)
-                            'Ejemplo:
-                            'font-family: 'Helvetica', 'San serif', 'Arial'
-                            'Si no encuentra la fuente de letra Helvetica, que le ponga San serif, y si no se encuentra San serif, entonces ponle Arial, ya qué :/
-
-                            _valueKeyOptions(iko) = keyOption
-
-                            iko += 1
-                        Next
-
-                        'Si son muchas opciones => conseguir la opcion más cercana y disponible
-                        If _CellConfig.ContainsKey(key) And _valueKeyOptions.Length > 1 Then
-                            value = GetOptionConfigAvailableValue(key, _valueKeyOptions)
-                        Else
-                            Console.WriteLine($"key not found for validate (keyOption): {key}")
-                        End If
-                    End If
-
-                    'Segunda validación(MULTIPLES CONFIGURACIONES) en value (¿hay espacios en blanco?, si hay entonces ... split(" "))
-                    If value.Contains(" ") Then
-                        Dim valueKeyConfig() As String = Regex.Split(value, "\s+").ToArray()
-
-                        'Configuraciones individuales
-                        For Each keyConfig In valueKeyConfig
-                            keyConfig = Trim(keyConfig)
-                            keyConfig = If(ConfigStringsDictionary.ContainsKey(keyConfig), ConfigStringsDictionary(keyConfig), keyConfig)
-                            keyConfig = Replace(Replace(keyConfig, """", ""), "'", "")            'esta cadena de texto no soporta " (comillas dobles) ni '(comillas sencillas) porque hacemos un replace sobre ella, en caso que se necesite, edítalo
-
-                            'Hacer aquí el procedimiento de MULTIPLES CONFIGURACIONES (éstas keyConfig mayormente son True, False)
-                            If _CellConfig.ContainsKey(keyConfig) Then
-                                _CellConfig(keyConfig) = GetKeyConfigDefaultValue(keyConfig, key)
-                            Else
-                                Console.WriteLine($"keyConfig not found: {keyConfig}")
-                            End If
-                        Next
-
-                    End If
+                    LexicalKey(key, value, _CellConfig, ConfigStringsDictionary)
                     '---------FIN SEPARADORES - NIVEL 3-----------
 
 
-                    'Seteamos todas las configuraciones key:value
-                    If _CellConfig.ContainsKey(key) Then
-                        value = If(ConfigStringsDictionary.ContainsKey(value), ConfigStringsDictionary(value), value)
-                        value = Replace(Replace(value, """", ""), "'", "")
-                        _CellConfig(key) = value
-                    Else
-                        Console.WriteLine($"key not found: {key}")
-                    End If
+                    ''Seteamos todas las configuraciones key:value
+                    'If _CellConfig.ContainsKey(key) Then
+                    '    value = If(ConfigStringsDictionary.ContainsKey(value), ConfigStringsDictionary(value), value)
+                    '    value = Replace(Replace(value, """", ""), "'", "")
+                    '    _CellConfig(key) = value
+                    'Else
+                    '    Console.WriteLine($"key not found: {key}")
+                    'End If
 
                 Next
             End If
@@ -364,41 +313,47 @@ Public Class Cell
                 BorderEnumerations.Remove(xlInsideHorizontal)
             End If
 
+            Dim borderWidth As String = ""
+            Dim borderStyle As String = ""
             Dim borderColor As String = ""
-            Dim allBorders As Boolean = BorderType(_CellConfig("border")) <> xlLineStyleNone
-            If allBorders Then
-                For Each borderEnumeration In BorderEnumerations
-                    CellRange.Borders(borderEnumeration.Key).LineStyle = BorderType(_CellConfig("border"))
+            Dim allBorder As Boolean = _CellConfig("border") <> "none"
+            If allBorder Then
+                borderWidth = "border-width"
+                If _CellConfig(borderWidth) <> "none" Then
+                    CellRange.Borders.Weight = Dictionary.BorderWeightEnumerations(_CellConfig(borderWidth))
+                End If
 
-                    borderColor = "border-color"
-                    If (_CellConfig(borderColor) <> "none") Then
-                        If (_CellConfig(borderColor).IndexOf("#") = 0) Then      'https://stackoverflow.com/questions/7423456/changing-an-excel-cells-backcolor-using-hex-results-in-excel-displaying-complet
-                            CellRange.Borders(borderEnumeration.Key).Color = FillType(_CellConfig(borderColor), "color-hex")
-                        ElseIf Regex.IsMatch(_CellConfig(borderColor), regxARGB) Then
-                            CellRange.Borders(borderEnumeration.Key).Color = FillType(_CellConfig(borderColor), "color-rgb")
-                        Else
-                            CellRange.Borders(borderEnumeration.Key).ColorIndex = FillType(_CellConfig(borderColor), "color-palette")
-                        End If
+                borderStyle = "border-style"
+                If _CellConfig(borderStyle) <> "none" Then
+                    CellRange.Borders.LineStyle = BorderType(_CellConfig(borderStyle))
+                End If
+
+                borderColor = "border-color"
+                If _CellConfig(borderColor) <> "none" Then
+                    If (_CellConfig(borderColor).IndexOf("#") = 0) Then      'https://stackoverflow.com/questions/7423456/changing-an-excel-cells-backcolor-using-hex-results-in-excel-displaying-complet
+                        CellRange.Borders.Color = FillType(_CellConfig(borderColor), "color-hex")
+                    ElseIf Regex.IsMatch(_CellConfig(borderColor), regxARGB) Then
+                        CellRange.Borders.Color = FillType(_CellConfig(borderColor), "color-rgb")
+                    Else
+                        CellRange.Borders.ColorIndex = FillType(_CellConfig(borderColor), "color-palette")
                     End If
-                Next
+                End If
             End If
+
             'configuración individual de los borders
             For Each border In BorderEnumerations   'Name = Value And Enumeration = Key
-                If BorderType(_CellConfig(border.Value)) <> xlLineStyleNone Then
-                    CellRange.Borders(border.Key).LineStyle = BorderType(_CellConfig(border.Value))
+                borderWidth = $"{border.Value}-width"
+                If _CellConfig(borderWidth) <> "none" Then
+                    CellRange.Borders(border.Key).Weight = Dictionary.BorderWeightEnumerations(_CellConfig(borderWidth))
+                End If
+
+                borderStyle = $"{border.Value}-style"
+                If _CellConfig(borderStyle) <> "none" Then
+                    CellRange.Borders(border.Key).LineStyle = BorderType(_CellConfig(borderStyle))
                 End If
 
                 borderColor = $"{border.Value}-color"
-                If (_CellConfig(borderColor) <> "none") Then
-                    If (_CellConfig(borderColor).IndexOf("#") = 0) Then      'https://stackoverflow.com/questions/7423456/changing-an-excel-cells-backcolor-using-hex-results-in-excel-displaying-complet
-                        CellRange.Borders(border.Key).Color = FillType(_CellConfig(borderColor), "color-hex")
-                    ElseIf Regex.IsMatch(_CellConfig(borderColor), regxARGB) Then
-                        CellRange.Borders(border.Key).Color = FillType(_CellConfig(borderColor), "color-rgb")
-                    Else
-                        CellRange.Borders(border.Key).ColorIndex = FillType(_CellConfig(borderColor), "color-palette")
-                    End If
-                ElseIf _CellConfig("border-color") <> "none" Then
-                    borderColor = "border-color"
+                If _CellConfig(borderColor) <> "none" Then
                     If (_CellConfig(borderColor).IndexOf("#") = 0) Then      'https://stackoverflow.com/questions/7423456/changing-an-excel-cells-backcolor-using-hex-results-in-excel-displaying-complet
                         CellRange.Borders(border.Key).Color = FillType(_CellConfig(borderColor), "color-hex")
                     ElseIf Regex.IsMatch(_CellConfig(borderColor), regxARGB) Then
@@ -614,7 +569,7 @@ Public Class Cell
         Return result
     End Function
 
-    Private Function GetOptionConfigAvailableValue(ByVal key As String, ByVal valueList() As String) As String
+    Private Shared Function GetOptionConfigAvailableValue(ByVal key As String, ByVal valueList() As String) As String
         Dim OptionAvailable As String = ""
 
         If key = "font-family" Then
@@ -652,6 +607,221 @@ Public Class Cell
         End If
 
         Return result
+    End Function
+
+    Private Shared Sub LexicalKey(key As String, value As String, _CellConfig As Dictionary(Of String, String), ConfigStringsDictionary As Dictionary(Of String, String))
+        Dim valueKeyConfig() As String = Regex.Split(value, "\s+").ToArray()
+        Dim totalParameters As Short = valueKeyConfig.Length
+
+        If key = "border-width" Then
+            If totalParameters = 1 Then
+                _CellConfig("border-top-width") = valueKeyConfig(0)
+                _CellConfig("border-right-width") = valueKeyConfig(0)
+                _CellConfig("border-bottom-width") = valueKeyConfig(0)
+                _CellConfig("border-left-width") = valueKeyConfig(0)
+            ElseIf totalParameters = 2 Then
+                _CellConfig("border-top-width") = valueKeyConfig(0)
+                _CellConfig("border-right-width") = valueKeyConfig(1)
+                _CellConfig("border-bottom-width") = valueKeyConfig(0)
+                _CellConfig("border-left-width") = valueKeyConfig(1)
+            ElseIf totalParameters = 3 Then
+                _CellConfig("border-top-width") = valueKeyConfig(0)
+                _CellConfig("border-right-width") = valueKeyConfig(1)
+                _CellConfig("border-bottom-width") = valueKeyConfig(2)
+                _CellConfig("border-left-width") = valueKeyConfig(1)
+            ElseIf totalParameters = 4 Then
+                _CellConfig("border-top-width") = valueKeyConfig(0)
+                _CellConfig("border-right-width") = valueKeyConfig(1)
+                _CellConfig("border-bottom-width") = valueKeyConfig(2)
+                _CellConfig("border-left-width") = valueKeyConfig(3)
+            Else
+                Console.WriteLine($"{key} has too many parameters")
+            End If
+        ElseIf key = "border-style" Then
+            If totalParameters = 1 Then
+                _CellConfig("border-top-style") = valueKeyConfig(0)
+                _CellConfig("border-right-style") = valueKeyConfig(0)
+                _CellConfig("border-bottom-style") = valueKeyConfig(0)
+                _CellConfig("border-left-style") = valueKeyConfig(0)
+            ElseIf totalParameters = 2 Then
+                _CellConfig("border-top-style") = valueKeyConfig(0)
+                _CellConfig("border-right-style") = valueKeyConfig(1)
+                _CellConfig("border-bottom-style") = valueKeyConfig(0)
+                _CellConfig("border-left-style") = valueKeyConfig(1)
+            ElseIf totalParameters = 3 Then
+                _CellConfig("border-top-style") = valueKeyConfig(0)
+                _CellConfig("border-right-style") = valueKeyConfig(1)
+                _CellConfig("border-bottom-style") = valueKeyConfig(2)
+                _CellConfig("border-left-style") = valueKeyConfig(1)
+            ElseIf totalParameters = 4 Then
+                _CellConfig("border-top-style") = valueKeyConfig(0)
+                _CellConfig("border-right-style") = valueKeyConfig(1)
+                _CellConfig("border-bottom-style") = valueKeyConfig(2)
+                _CellConfig("border-left-style") = valueKeyConfig(3)
+            Else
+                Console.WriteLine($"{key} has too many parameters")
+            End If
+        ElseIf key = "border-color" Then
+            If totalParameters = 1 Then
+                _CellConfig("border-top-color") = GetStringSustitution(valueKeyConfig(0), ConfigStringsDictionary)
+                _CellConfig("border-right-color") = GetStringSustitution(valueKeyConfig(0), ConfigStringsDictionary)
+                _CellConfig("border-bottom-color") = GetStringSustitution(valueKeyConfig(0), ConfigStringsDictionary)
+                _CellConfig("border-left-color") = GetStringSustitution(valueKeyConfig(0), ConfigStringsDictionary)
+            ElseIf totalParameters = 2 Then
+                _CellConfig("border-top-color") = GetStringSustitution(valueKeyConfig(0), ConfigStringsDictionary)
+                _CellConfig("border-right-color") = GetStringSustitution(valueKeyConfig(1), ConfigStringsDictionary)
+                _CellConfig("border-bottom-color") = GetStringSustitution(valueKeyConfig(0), ConfigStringsDictionary)
+                _CellConfig("border-left-color") = GetStringSustitution(valueKeyConfig(1), ConfigStringsDictionary)
+            ElseIf totalParameters = 3 Then
+                _CellConfig("border-top-color") = GetStringSustitution(valueKeyConfig(0), ConfigStringsDictionary)
+                _CellConfig("border-right-color") = GetStringSustitution(valueKeyConfig(1), ConfigStringsDictionary)
+                _CellConfig("border-bottom-color") = GetStringSustitution(valueKeyConfig(2), ConfigStringsDictionary)
+                _CellConfig("border-left-color") = GetStringSustitution(valueKeyConfig(1), ConfigStringsDictionary)
+            ElseIf totalParameters = 4 Then
+                _CellConfig("border-top-color") = GetStringSustitution(valueKeyConfig(0), ConfigStringsDictionary)
+                _CellConfig("border-right-color") = GetStringSustitution(valueKeyConfig(1), ConfigStringsDictionary)
+                _CellConfig("border-bottom-color") = GetStringSustitution(valueKeyConfig(2), ConfigStringsDictionary)
+                _CellConfig("border-left-color") = GetStringSustitution(valueKeyConfig(3), ConfigStringsDictionary)
+            Else
+                Console.WriteLine($"{key} has too many parameters")
+            End If
+        ElseIf {"border-top", "border-right", "border-bottom", "border-left"}.Contains(key) Then
+            If totalParameters >= 1 And totalParameters <= 3 Then
+                Dim repeatWidth, repeatStyle, repeatColor As Boolean
+
+                For i = 0 To valueKeyConfig.Length - 1
+                    Dim _valueKeyConfig = GetStringSustitution(valueKeyConfig(i), ConfigStringsDictionary)
+                    Dim type As String = GetBorderParameter(_valueKeyConfig)
+                    If type = "width" Then
+                        If Not repeatWidth Then
+                            repeatWidth = True
+                            _CellConfig($"{key}-width") = _valueKeyConfig
+                        Else
+                            Console.WriteLine($"{key} {type} {_valueKeyConfig} is repeated")
+                        End If
+                    ElseIf type = "style" Then
+                        If Not repeatStyle Then
+                            repeatStyle = True
+                            _CellConfig($"{key}-style") = _valueKeyConfig
+                        Else
+                            Console.WriteLine($"{key} {type} {_valueKeyConfig} is repeated")
+                        End If
+                    ElseIf type = "color" Then
+                        If Not repeatColor Then
+                            repeatColor = True
+                            _CellConfig($"{key}-color") = _valueKeyConfig
+                        Else
+                            Console.WriteLine($"{key} {type} {_valueKeyConfig} is repeated")
+                        End If
+                    End If
+                Next
+            Else
+                Console.WriteLine($"{key} too much parameters")
+            End If
+        ElseIf key = "border" Then
+            If totalParameters >= 1 And totalParameters <= 3 Then
+                For Each _valueKeyConfig In valueKeyConfig
+                    _valueKeyConfig = GetStringSustitution(_valueKeyConfig, ConfigStringsDictionary)
+                    Dim type As String = GetBorderParameter(_valueKeyConfig)
+                    _CellConfig($"{key}-{type}") = _valueKeyConfig
+                Next
+            Else
+                Console.WriteLine($"{key} too much parameters")
+            End If
+        Else
+            LexicalSeparator(key, value, _CellConfig, ConfigStringsDictionary)
+        End If
+
+        'Seteamos todas las configuraciones key: value
+        If _CellConfig.ContainsKey(key) Then
+            value = If(ConfigStringsDictionary.ContainsKey(value), ConfigStringsDictionary(value), value)
+            value = Replace(Replace(value, """", ""), "'", "")
+            _CellConfig(key) = value
+        Else
+            Console.WriteLine($"key not found: {key}")
+        End If
+
+    End Sub
+
+    Private Shared Function GetStringSustitution(value As String, ConfigStringsDictionary As Dictionary(Of String, String))
+        Return If(ConfigStringsDictionary.ContainsKey(value),
+                    ConfigStringsDictionary(value),
+                    value
+            )
+    End Function
+
+    Private Shared Sub LexicalSeparator(key As String, value As String, _CellConfig As Dictionary(Of String, String), ConfigStringsDictionary As Dictionary(Of String, String))
+        'Primera validación(MULTIPLES OPCIONES) en value (¿hay comas?, si hay entonces ... split(","))
+        If value.Contains(",") Then
+
+            '¿hay espacios en blanco? => borrarlos, porque o es multiple opción o es multiple configuración, no puedes servir a dos señores
+            value = Replace(value, " ", "")
+
+            Dim valueKeyOptions() As String = value.Split(",")
+            Dim _valueKeyOptions() As String = Array.Empty(Of String)()
+            Dim iko As Integer = 0      'iterador para keyOption
+            'Limpiando las opciones
+            For Each keyOption In valueKeyOptions
+                keyOption = Trim(keyOption)
+                keyOption = If(ConfigStringsDictionary.ContainsKey(keyOption), ConfigStringsDictionary(keyOption), keyOption)
+                keyOption = Replace(Replace(keyOption, """", ""), "'", "")            'esta cadena de texto no soporta " (comillas dobles) ni '(comillas sencillas) porque hacemos un replace sobre ella, en caso que se necesite, edítalo
+
+                'Aquí va el procedimiento par las MULTIPLES OPCIONES (hasta ahora no se ha utilizado esta funcionalidad sin embargo dejamos un ejemplo)
+                'Ejemplo:
+                'font-family: 'Helvetica', 'San serif', 'Arial'
+                'Si no encuentra la fuente de letra Helvetica, que le ponga San serif, y si no se encuentra San serif, entonces ponle Arial, ya qué :/
+
+                _valueKeyOptions(iko) = keyOption
+
+                iko += 1
+            Next
+
+            'Si son muchas opciones => conseguir la opcion más cercana y disponible
+            If _CellConfig.ContainsKey(key) And _valueKeyOptions.Length > 1 Then
+                value = GetOptionConfigAvailableValue(key, _valueKeyOptions)
+            Else
+                Console.WriteLine($"key not found for validate (keyOption): {key}")
+            End If
+        End If
+
+        'Segunda validación(MULTIPLES CONFIGURACIONES) en value (¿hay espacios en blanco?, si hay entonces ... split(" "))
+        If value.Contains(" ") Then
+            Dim valueKeyConfig() As String = Regex.Split(value, "\s+").ToArray()
+
+            'Configuraciones individuales
+            For Each keyConfig In valueKeyConfig
+                keyConfig = Trim(keyConfig)
+                keyConfig = If(ConfigStringsDictionary.ContainsKey(keyConfig), ConfigStringsDictionary(keyConfig), keyConfig)
+                keyConfig = Replace(Replace(keyConfig, """", ""), "'", "")            'esta cadena de texto no soporta " (comillas dobles) ni '(comillas sencillas) porque hacemos un replace sobre ella, en caso que se necesite, edítalo
+
+                'Hacer aquí el procedimiento de MULTIPLES CONFIGURACIONES (éstas keyConfig mayormente son True, False)
+                If _CellConfig.ContainsKey(keyConfig) Then
+                    _CellConfig(keyConfig) = GetKeyConfigDefaultValue(keyConfig, key)
+                Else
+                    Console.WriteLine($"keyConfig not found: {keyConfig}")
+                End If
+            Next
+
+        End If
+    End Sub
+
+    Private Shared Function GetBorderParameter(valueKeyConfig As String) As Object
+        Dim parameter As String = ""
+        Dim regxARGB As String = "^(a?rgb)?\(?([01]?\d\d?|2[0-4]\d|25[0-5])(\W+)([01]?\d\d?|2[0-4]\d|25[0-5])\W+(([01]?\d\d?|2[0-4]\d|25[0-5])\)?)$"
+
+        If Dictionary.BorderWeightEnumerations.ContainsKey(valueKeyConfig) Then
+            parameter = "width"
+        ElseIf Dictionary.BorderTypes.ContainsKey(valueKeyConfig) Then
+            parameter = "style"
+        ElseIf Dictionary.PaletteColorTypes.ContainsKey(valueKeyConfig) Then
+            parameter = "color"
+        ElseIf valueKeyConfig.IndexOf("#") = 0 Then
+            parameter = "color"
+        ElseIf Regex.IsMatch(valueKeyConfig, regxARGB) Then
+            parameter = "color"
+        End If
+
+        Return parameter
     End Function
 
 #End Region

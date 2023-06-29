@@ -1,4 +1,5 @@
 ﻿Imports Microsoft.Office.Interop.Excel.XlColorIndex
+Imports Microsoft.Office.Interop.Excel.XlBorderWeight
 Public Class Dictionary
 #Region "Constantes"
     'Info extra: https://learn.microsoft.com/en-us/office/vba/api/excel.constants
@@ -48,21 +49,31 @@ Public Class Dictionary
         Get
             CellConfigurations = New Dictionary(Of String, String) From {
                 {"border", "linestylenone"},            'BORDER - [continuous, dash, dashdot, dashdotdot, dot, double, linestylenone, slantdashdot]     
-                {"border-left", "linestylenone"},       'BORDER - [continuous, dash, dashdot, dashdotdot, dot, double, linestylenone, slantdashdot]
-                {"border-right", "linestylenone"},      'BORDER - [continuous, dash, dashdot, dashdotdot, dot, double, linestylenone, slantdashdot]
                 {"border-top", "linestylenone"},        'BORDER - [continuous, dash, dashdot, dashdotdot, dot, double, linestylenone, slantdashdot]
+                {"border-right", "linestylenone"},      'BORDER - [continuous, dash, dashdot, dashdotdot, dot, double, linestylenone, slantdashdot]
                 {"border-bottom", "linestylenone"},     'BORDER - [continuous, dash, dashdot, dashdotdot, dot, double, linestylenone, slantdashdot]
+                {"border-left", "linestylenone"},       'BORDER - [continuous, dash, dashdot, dashdotdot, dot, double, linestylenone, slantdashdot]
                 {"border-inside-horizontal", "linestylenone"},   'BORDER - [continuous, dash, dashdot, dashdotdot, dot, double, linestylenone, slantdashdot]
                 {"border-inside-vertical", "linestylenone"},     'BORDER - [continuous, dash, dashdot, dashdotdot, dot, double, linestylenone, slantdashdot]
+                {"border-width", "none"},               'BORDER - Todos los bordes [thin, medium, thick, (length)]
+                {"border-top-width", "none"},           'BORDER - [thin, medium, thick, (length)]
+                {"border-right-width", "none"},         'BORDER - [thin, medium, thick, (length)]
+                {"border-bottom-width", "none"},        'BORDER - [thin, medium, thick, (length)]
+                {"border-left-width", "none"},          'BORDER - [thin, medium, thick, (length)]
+                {"border-style", "none"},
+                {"border-top-style", "none"},
+                {"border-right-style", "none"},
+                {"border-bottom-style", "none"},
+                {"border-left-style", "none"},
                 {"border-color", "none"},               'BORDER - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
-                {"border-left-color", "none"},          'BORDER - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
-                {"border-right-color", "none"},         'BORDER - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
                 {"border-top-color", "none"},           'BORDER - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
+                {"border-right-color", "none"},         'BORDER - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
                 {"border-bottom-color", "none"},        'BORDER - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
+                {"border-left-color", "none"},          'BORDER - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
                 {"border-inside-horizontal-color", "none"},     'BORDER - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
                 {"border-inside-vertical-color", "none"},       'BORDER - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
-                {"font-size", 8},                       'FONT - Tamaño de letra en número
-                {"font-family", "Arial"},               'FONT - [Arial, San Serif, Helvetica, Calibri, ...] (múltiples opciones, con orden de existencia, separados por una coma)
+                {"font-size", 12},                       'FONT - Tamaño de letra en número
+                {"font-family", "Calibri"},               'FONT - [Arial, San Serif, Helvetica, Calibri, ...] (múltiples opciones, con orden de existencia, separados por una coma)
                 {"font-style", "normal"},               'FONT - [normal, bold, italic, underline] (multiples configuraciones separados por un espacio)                     
                 {"color", "none"},                      'FONT - (namecolor, hexdecimal format, rgb format) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
                 {"italic", False},                      'FONT - [true, false]
@@ -90,10 +101,13 @@ Public Class Dictionary
     ''' </summary>
     Public Shared BorderTypes As New Dictionary(Of String, Short) From {
             {"continuous", xlContinuous},
+            {"solid", xlContinuous},        'css
             {"dash", xlDash},
+            {"dashed", xlDash},             'css
             {"dashdot", xlDashDot},
             {"dashdotdot", xlDashDotDot},
             {"dot", xlDot},
+            {"dotted", xlDot},              'css
             {"double", xlDouble},
             {"slantdashdot", xlSlantDashDot},
             {"linestylenone", xlLineStyleNone},     'none
@@ -107,16 +121,27 @@ Public Class Dictionary
     Public Shared ReadOnly Property NameAndEnumerationBorders() As Dictionary(Of Short, String)
         Get
             NameAndEnumerationBorders = New Dictionary(Of Short, String) From {
-                {xlEdgeLeft, "border-left"},
-                {xlEdgeRight, "border-right"},
                 {xlEdgeTop, "border-top"},
+                {xlEdgeRight, "border-right"},
                 {xlEdgeBottom, "border-bottom"},
+                {xlEdgeLeft, "border-left"},
                 {xlInsideHorizontal, "border-inside-horizontal"},
                 {xlInsideVertical, "border-inside-vertical"}
             }
             Exit Property
         End Get
     End Property
+
+    ''' <summary>
+    ''' Diccionario de enumeración de anchura de borde
+    ''' Info: https://learn.microsoft.com/en-us/office/vba/api/excel.xlborderweight
+    ''' </summary>
+    Public Shared BorderWeightEnumerations As New Dictionary(Of String, Short) From {
+            {"hairline", xlHairline},
+            {"medium", xlMedium},
+            {"thick", xlThick},     '(widest border)
+            {"thin", xlThin}
+    }
 #End Region
 
 #Region "Diccionarios - FONTS"
