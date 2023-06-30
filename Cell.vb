@@ -274,17 +274,6 @@ Public Class Cell
                     '-----------SEPARADORES - NIVEL 3-----------
                     LexicalKey(key, value, _CellConfig, ConfigStringsDictionary)
                     '---------FIN SEPARADORES - NIVEL 3-----------
-
-
-                    ''Seteamos todas las configuraciones key:value
-                    'If _CellConfig.ContainsKey(key) Then
-                    '    value = If(ConfigStringsDictionary.ContainsKey(value), ConfigStringsDictionary(value), value)
-                    '    value = Replace(Replace(value, """", ""), "'", "")
-                    '    _CellConfig(key) = value
-                    'Else
-                    '    Console.WriteLine($"key not found: {key}")
-                    'End If
-
                 Next
             End If
         Catch ex As Exception
@@ -305,8 +294,8 @@ Public Class Cell
             Dim BorderEnumerations As Dictionary(Of Short, String) = Dictionary.NameAndEnumerationBorders
             If RangeNotMergeConfigurationNivel = "cell" Then
                 'Setear los bordes internos por default
-                _CellConfig("border-inside-horizontal") = If(BorderType(_CellConfig("border-inside-horizontal")) = xlLineStyleNone, _CellConfig("border-bottom"), _CellConfig("border-inside-horizontal"))
-                _CellConfig("border-inside-vertical") = If(BorderType(_CellConfig("border-inside-vertical")) = xlLineStyleNone, _CellConfig("border-right"), _CellConfig("border-inside-vertical"))
+                _CellConfig("border-inside-horizontal") = If(GetBorderStyle(_CellConfig("border-inside-horizontal")) = xlLineStyleNone, _CellConfig("border-bottom"), _CellConfig("border-inside-horizontal"))
+                _CellConfig("border-inside-vertical") = If(GetBorderStyle(_CellConfig("border-inside-vertical")) = xlLineStyleNone, _CellConfig("border-right"), _CellConfig("border-inside-vertical"))
             Else
                 'Para agregar sólo borde del rango (sin los bordes internos del rango)
                 BorderEnumerations.Remove(xlInsideVertical)
@@ -325,7 +314,7 @@ Public Class Cell
 
                 borderStyle = "border-style"
                 If _CellConfig(borderStyle) <> "none" Then
-                    CellRange.Borders.LineStyle = BorderType(_CellConfig(borderStyle))
+                    CellRange.Borders.LineStyle = GetBorderStyle(_CellConfig(borderStyle))
                 End If
 
                 borderColor = "border-color"
@@ -349,7 +338,7 @@ Public Class Cell
 
                 borderStyle = $"{border.Value}-style"
                 If _CellConfig(borderStyle) <> "none" Then
-                    CellRange.Borders(border.Key).LineStyle = BorderType(_CellConfig(borderStyle))
+                    CellRange.Borders(border.Key).LineStyle = GetBorderStyle(_CellConfig(borderStyle))
                 End If
 
                 borderColor = $"{border.Value}-color"
@@ -411,10 +400,10 @@ Public Class Cell
     ''' </summary>
     ''' <param name="keyName"></param>
     ''' <returns></returns>
-    Private Shared Function BorderType(keyName As String) As Object
-        Return If(Dictionary.BorderTypes.ContainsKey(keyName),
-                  Dictionary.BorderTypes(keyName),
-                  Dictionary.BorderTypes("none")     'default
+    Private Shared Function GetBorderStyle(keyName As String) As Object
+        Return If(Dictionary.BorderStyles.ContainsKey(keyName),
+                  Dictionary.BorderStyles(keyName),
+                  Dictionary.BorderStyles("none")     'default
         )
     End Function
 
@@ -472,7 +461,7 @@ Public Class Cell
             '====>UNDERLINE
             If type = "underline" Then
                 Dim underlineTypeList As New List(Of String)
-                For Each ut In Dictionary.UnderlineTypes.Keys
+                For Each ut In Dictionary.UnderlineStyles.Keys
                     underlineTypeList.Add($"underline-{ut}")
                 Next
 
@@ -496,9 +485,9 @@ Public Class Cell
                 Next
 
                 'resultado
-                result = If(Dictionary.UnderlineTypes.ContainsKey(If(_keyName <> "", _keyName, keyValue)),
-                      Dictionary.UnderlineTypes(If(_keyName <> "", _keyName, keyValue)),
-                      Dictionary.UnderlineTypes("none")
+                result = If(Dictionary.UnderlineStyles.ContainsKey(If(_keyName <> "", _keyName, keyValue)),
+                      Dictionary.UnderlineStyles(If(_keyName <> "", _keyName, keyValue)),
+                      Dictionary.UnderlineStyles("none")
                 )
 
             End If
@@ -612,6 +601,7 @@ Public Class Cell
     Private Shared Sub LexicalKey(key As String, value As String, _CellConfig As Dictionary(Of String, String), ConfigStringsDictionary As Dictionary(Of String, String))
         Dim valueKeyConfig() As String = Regex.Split(value, "\s+").ToArray()
         Dim totalParameters As Short = valueKeyConfig.Length
+        Dim repeatWidth, repeatStyle, repeatColor As Boolean  'validación de tipos de parámetros repetidos: Ejemplo: border-top: thin thin blue
 
         If key = "border-width" Then
             If totalParameters = 1 Then
@@ -687,31 +677,34 @@ Public Class Cell
             End If
         ElseIf {"border-top", "border-right", "border-bottom", "border-left"}.Contains(key) Then
             If totalParameters >= 1 And totalParameters <= 3 Then
-                Dim repeatWidth, repeatStyle, repeatColor As Boolean
 
                 For i = 0 To valueKeyConfig.Length - 1
                     Dim _valueKeyConfig = GetStringSustitution(valueKeyConfig(i), ConfigStringsDictionary)
-                    Dim type As String = GetBorderParameter(_valueKeyConfig)
-                    If type = "width" Then
-                        If Not repeatWidth Then
-                            repeatWidth = True
-                            _CellConfig($"{key}-width") = _valueKeyConfig
-                        Else
-                            Console.WriteLine($"{key} {type} {_valueKeyConfig} is repeated")
-                        End If
-                    ElseIf type = "style" Then
-                        If Not repeatStyle Then
-                            repeatStyle = True
-                            _CellConfig($"{key}-style") = _valueKeyConfig
-                        Else
-                            Console.WriteLine($"{key} {type} {_valueKeyConfig} is repeated")
-                        End If
-                    ElseIf type = "color" Then
-                        If Not repeatColor Then
-                            repeatColor = True
-                            _CellConfig($"{key}-color") = _valueKeyConfig
-                        Else
-                            Console.WriteLine($"{key} {type} {_valueKeyConfig} is repeated")
+
+                    'ignorar el valor de parámetro none
+                    If _valueKeyConfig <> "none" Then
+                        Dim type As String = GetBorderParameter(_valueKeyConfig)
+                        If type = "width" Then
+                            If Not repeatWidth Then
+                                repeatWidth = True
+                                _CellConfig($"{key}-width") = _valueKeyConfig
+                            Else
+                                Console.WriteLine($"{key} {type} {_valueKeyConfig} is repeated")
+                            End If
+                        ElseIf type = "style" Then
+                            If Not repeatStyle Then
+                                repeatStyle = True
+                                _CellConfig($"{key}-style") = _valueKeyConfig
+                            Else
+                                Console.WriteLine($"{key} {type} {_valueKeyConfig} is repeated")
+                            End If
+                        ElseIf type = "color" Then
+                            If Not repeatColor Then
+                                repeatColor = True
+                                _CellConfig($"{key}-color") = _valueKeyConfig
+                            Else
+                                Console.WriteLine($"{key} {type} {_valueKeyConfig} is repeated")
+                            End If
                         End If
                     End If
                 Next
@@ -722,8 +715,30 @@ Public Class Cell
             If totalParameters >= 1 And totalParameters <= 3 Then
                 For Each _valueKeyConfig In valueKeyConfig
                     _valueKeyConfig = GetStringSustitution(_valueKeyConfig, ConfigStringsDictionary)
-                    Dim type As String = GetBorderParameter(_valueKeyConfig)
-                    _CellConfig($"{key}-{type}") = _valueKeyConfig
+
+                    'ignorar el valor de parámetro none
+                    If _valueKeyConfig <> "none" Then
+                        Dim type As String = GetBorderParameter(_valueKeyConfig)
+                        If type = "style" Then
+                            If Not repeatStyle Then
+                                _CellConfig($"{key}-{type}") = _valueKeyConfig
+                            Else
+                                Console.WriteLine($"{key} {type} {_valueKeyConfig} is repeated")
+                            End If
+                        ElseIf type = "width" Then
+                            If Not repeatWidth Then
+                                _CellConfig($"{key}-{type}") = _valueKeyConfig
+                            Else
+                                Console.WriteLine($"{key} {type} {_valueKeyConfig} is repeated")
+                            End If
+                        ElseIf type = "color" Then
+                            If Not repeatColor Then
+                                _CellConfig($"{key}-{type}") = _valueKeyConfig
+                            Else
+                                Console.WriteLine($"{key} {type} {_valueKeyConfig} is repeated")
+                            End If
+                        End If
+                    End If
                 Next
             Else
                 Console.WriteLine($"{key} too much parameters")
@@ -811,7 +826,7 @@ Public Class Cell
 
         If Dictionary.BorderWeightEnumerations.ContainsKey(valueKeyConfig) Then
             parameter = "width"
-        ElseIf Dictionary.BorderTypes.ContainsKey(valueKeyConfig) Then
+        ElseIf Dictionary.BorderStyles.ContainsKey(valueKeyConfig) Then
             parameter = "style"
         ElseIf Dictionary.PaletteColorTypes.ContainsKey(valueKeyConfig) Then
             parameter = "color"

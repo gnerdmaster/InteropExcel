@@ -1,40 +1,47 @@
 ﻿Imports Microsoft.Office.Interop.Excel.XlColorIndex
+'Imports Microsoft.Office.Interop.Excel.XlRgbColor 'pendiente       'rgbNameColor
+'Imports Microsoft.Office.Interop.Excel.XlStdColorScale ' pendiente     'scaleColor example. whiteblack blackwhite
 Imports Microsoft.Office.Interop.Excel.XlBorderWeight
+Imports Microsoft.Office.Interop.Excel.XlBordersIndex
+Imports Microsoft.Office.Interop.Excel.XlLineStyle
+Imports Microsoft.Office.Interop.Excel.XlUnderlineStyle
+Imports Microsoft.Office.Interop.Excel.XlHAlign
+Imports Microsoft.Office.Interop.Excel.XlVAlign
 Public Class Dictionary
 #Region "Constantes"
     'Info extra: https://learn.microsoft.com/en-us/office/vba/api/excel.constants
     'FONTS
-    Const xlUnderlineStyleDouble As Short = Microsoft.Office.Interop.Excel.XlUnderlineStyle.xlUnderlineStyleDouble
-    Const xlUnderlineStyleDoubleAccounting As Short = Microsoft.Office.Interop.Excel.XlUnderlineStyle.xlUnderlineStyleDoubleAccounting
-    Const xlUnderlineStyleNone As Short = Microsoft.Office.Interop.Excel.XlUnderlineStyle.xlUnderlineStyleNone
-    Const xlUnderlineStyleSingle As Short = Microsoft.Office.Interop.Excel.XlUnderlineStyle.xlUnderlineStyleSingle
+    'Const xlUnderlineStyleDouble As Short = Microsoft.Office.Interop.Excel.XlUnderlineStyle.xlUnderlineStyleDouble
+    'Const xlUnderlineStyleDoubleAccounting As Short = Microsoft.Office.Interop.Excel.XlUnderlineStyle.xlUnderlineStyleDoubleAccounting
+    'Const xlUnderlineStyleNone As Short = Microsoft.Office.Interop.Excel.XlUnderlineStyle.xlUnderlineStyleNone
+    'Const xlUnderlineStyleSingle As Short = Microsoft.Office.Interop.Excel.XlUnderlineStyle.xlUnderlineStyleSingle
 
     'ALIGNMENT
-    Const xlHAlignLeft As Short = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft
-    Const xlHAlignRight As Short = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight
-    Const xlHAlignCenter As Short = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter
-    Const xlHAlignJustify As Short = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignJustify
-    Const xlVAlignTop As Short = Microsoft.Office.Interop.Excel.XlVAlign.xlVAlignTop
-    Const xlVAlignBottom As Short = Microsoft.Office.Interop.Excel.XlVAlign.xlVAlignBottom
-    Const xlVAlignCenter As Short = Microsoft.Office.Interop.Excel.XlVAlign.xlVAlignCenter
-    Const xlHAlignFill As Short = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignFill
+    'Const xlHAlignLeft As Short = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft
+    'Const xlHAlignRight As Short = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight
+    'Const xlHAlignCenter As Short = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter
+    'Const xlHAlignJustify As Short = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignJustify
+    'Const xlHAlignFill As Short = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignFill
+    'Const xlVAlignTop As Short = Microsoft.Office.Interop.Excel.XlVAlign.xlVAlignTop
+    'Const xlVAlignBottom As Short = Microsoft.Office.Interop.Excel.XlVAlign.xlVAlignBottom
+    'Const xlVAlignCenter As Short = Microsoft.Office.Interop.Excel.XlVAlign.xlVAlignCenter
 
     'BORDERS
-    Const xlEdgeLeft As Short = Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft
-    Const xlEdgeRight As Short = Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight
-    Const xlEdgeTop As Short = Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop
-    Const xlEdgeBottom As Short = Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom
-    Const xlInsideHorizontal As Short = Microsoft.Office.Interop.Excel.XlBordersIndex.xlInsideHorizontal
-    Const xlInsideVertical As Short = Microsoft.Office.Interop.Excel.XlBordersIndex.xlInsideVertical
+    'Const xlEdgeLeft As Short = Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeLeft
+    'Const xlEdgeRight As Short = Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeRight
+    'Const xlEdgeTop As Short = Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop
+    'Const xlEdgeBottom As Short = Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom
+    'Const xlInsideHorizontal As Short = Microsoft.Office.Interop.Excel.XlBordersIndex.xlInsideHorizontal
+    'Const xlInsideVertical As Short = Microsoft.Office.Interop.Excel.XlBordersIndex.xlInsideVertical
     '---
-    Const xlContinuous As Short = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous
-    Const xlDash As Short = Microsoft.Office.Interop.Excel.XlLineStyle.xlDash
-    Const xlDashDot As Short = Microsoft.Office.Interop.Excel.XlLineStyle.xlDashDot
-    Const xlDashDotDot As Short = Microsoft.Office.Interop.Excel.XlLineStyle.xlDashDotDot
-    Const xlDot As Short = Microsoft.Office.Interop.Excel.XlLineStyle.xlDot
-    Const xlDouble As Short = Microsoft.Office.Interop.Excel.XlLineStyle.xlDouble
-    Const xlLineStyleNone As Short = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone
-    Const xlSlantDashDot As Short = Microsoft.Office.Interop.Excel.XlLineStyle.xlSlantDashDot
+    'Const xlContinuous As Short = Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous
+    'Const xlDash As Short = Microsoft.Office.Interop.Excel.XlLineStyle.xlDash
+    'Const xlDashDot As Short = Microsoft.Office.Interop.Excel.XlLineStyle.xlDashDot
+    'Const xlDashDotDot As Short = Microsoft.Office.Interop.Excel.XlLineStyle.xlDashDotDot
+    'Const xlDot As Short = Microsoft.Office.Interop.Excel.XlLineStyle.xlDot
+    'Const xlDouble As Short = Microsoft.Office.Interop.Excel.XlLineStyle.xlDouble
+    'Const xlLineStyleNone As Short = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone
+    'Const xlSlantDashDot As Short = Microsoft.Office.Interop.Excel.XlLineStyle.xlSlantDashDot
 #End Region
 
 #Region "Diccionarios - CELDA (PRINCIPAL)"
@@ -48,43 +55,43 @@ Public Class Dictionary
         'Se usa propiedades como la mejor opción de llamado a las configuraciones predeterminadas: https://learn.microsoft.com/en-us/dotnet/visual-basic/language-reference/statements/get-statement
         Get
             CellConfigurations = New Dictionary(Of String, String) From {
-                {"border", "linestylenone"},            'BORDER - [continuous, dash, dashdot, dashdotdot, dot, double, linestylenone, slantdashdot]     
-                {"border-top", "linestylenone"},        'BORDER - [continuous, dash, dashdot, dashdotdot, dot, double, linestylenone, slantdashdot]
-                {"border-right", "linestylenone"},      'BORDER - [continuous, dash, dashdot, dashdotdot, dot, double, linestylenone, slantdashdot]
-                {"border-bottom", "linestylenone"},     'BORDER - [continuous, dash, dashdot, dashdotdot, dot, double, linestylenone, slantdashdot]
-                {"border-left", "linestylenone"},       'BORDER - [continuous, dash, dashdot, dashdotdot, dot, double, linestylenone, slantdashdot]
-                {"border-inside-horizontal", "linestylenone"},   'BORDER - [continuous, dash, dashdot, dashdotdot, dot, double, linestylenone, slantdashdot]
-                {"border-inside-vertical", "linestylenone"},     'BORDER - [continuous, dash, dashdot, dashdotdot, dot, double, linestylenone, slantdashdot]
-                {"border-width", "none"},               'BORDER - Todos los bordes [thin, medium, thick, (length)]
-                {"border-top-width", "none"},           'BORDER - [thin, medium, thick, (length)]
-                {"border-right-width", "none"},         'BORDER - [thin, medium, thick, (length)]
-                {"border-bottom-width", "none"},        'BORDER - [thin, medium, thick, (length)]
-                {"border-left-width", "none"},          'BORDER - [thin, medium, thick, (length)]
-                {"border-style", "none"},
-                {"border-top-style", "none"},
-                {"border-right-style", "none"},
-                {"border-bottom-style", "none"},
-                {"border-left-style", "none"},
-                {"border-color", "none"},               'BORDER - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
-                {"border-top-color", "none"},           'BORDER - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
-                {"border-right-color", "none"},         'BORDER - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
-                {"border-bottom-color", "none"},        'BORDER - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
-                {"border-left-color", "none"},          'BORDER - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
-                {"border-inside-horizontal-color", "none"},     'BORDER - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
-                {"border-inside-vertical-color", "none"},       'BORDER - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
-                {"font-size", 12},                       'FONT - Tamaño de letra en número
-                {"font-family", "Calibri"},               'FONT - [Arial, San Serif, Helvetica, Calibri, ...] (múltiples opciones, con orden de existencia, separados por una coma)
+                {"border", "none"},
+                {"border-top", "none"},        'BORDER - [<width-value> | <style-value> | <color-value>] - https://developer.mozilla.org/es/docs/Web/CSS/border-top
+                {"border-right", "none"},      'BORDER - [<width-value> | <style-value> | <color-value>] - https://developer.mozilla.org/es/docs/Web/CSS/border-right
+                {"border-bottom", "none"},     'BORDER - [<width-value> | <style-value> | <color-value>] - https://developer.mozilla.org/es/docs/Web/CSS/border-bottom
+                {"border-left", "none"},       'BORDER - [<width-value> | <style-value> | <color-value>] - https://developer.mozilla.org/es/docs/Web/CSS/border-left
+                {"border-inside-horizontal", "none"},
+                {"border-inside-vertical", "none"},
+                {"border-width", "none"},               'BORDER WIDTH- Todos los bordes [thin, medium, thick, (length not soported)]
+                {"border-top-width", "none"},           'BORDER WIDTH- [thin | medium | thick | (length not soported)]
+                {"border-right-width", "none"},         'BORDER WIDTH- [thin | medium | thick | (length not soported)]
+                {"border-bottom-width", "none"},        'BORDER WIDTH- [thin | medium | thick | (length not soported)]
+                {"border-left-width", "none"},          'BORDER WIDTH- [thin | medium | thick | (length not soported)]
+                {"border-style", "none"},               'BORDER STYLE- [continuous(solid) | dash(dashed) | dashdot | dashdotdot | dot(dotted) | double | linestylenone(none) | slantdashdot]
+                {"border-top-style", "none"},           'BORDER STYLE- [continuous(solid) | dash(dashed) | dashdot | dashdotdot | dot(dotted) | double | linestylenone(none) | slantdashdot]
+                {"border-right-style", "none"},         'BORDER STYLE- [continuous(solid) | dash(dashed) | dashdot | dashdotdot | dot(dotted) | double | linestylenone(none) | slantdashdot]
+                {"border-bottom-style", "none"},        'BORDER STYLE- [continuous(solid) | dash(dashed) | dashdot | dashdotdot | dot(dotted) | double | linestylenone(none) | slantdashdot]
+                {"border-left-style", "none"},          'BORDER STYLE- [continuous(solid) | dash(dashed) | dashdot | dashdotdot | dot(dotted) | double | linestylenone(none) | slantdashdot]
+                {"border-color", "none"},                       'BORDER COLOR- (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
+                {"border-top-color", "none"},                   'BORDER COLOR- (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
+                {"border-right-color", "none"},                 'BORDER COLOR- (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
+                {"border-bottom-color", "none"},                'BORDER COLOR- (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
+                {"border-left-color", "none"},                  'BORDER COLOR- (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
+                {"border-inside-horizontal-color", "none"},     'BORDER COLOR - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
+                {"border-inside-vertical-color", "none"},       'BORDER COLOR - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
+                {"font-size", 12},                      'FONT - Tamaño de letra en número
+                {"font-family", "Calibri"},             'FONT - [Arial, San Serif, Helvetica, Calibri, ...] (múltiples opciones, con orden de existencia, separados por una coma)
                 {"font-style", "normal"},               'FONT - [normal, bold, italic, underline] (multiples configuraciones separados por un espacio)                     
                 {"color", "none"},                      'FONT - (namecolor, hexdecimal format, rgb format) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
-                {"italic", False},                      'FONT - [true, false]
-                {"bold", False},                        'FONT - [true, false]
+                {"italic", False},                      'FONT - [true | false]
+                {"bold", False},                        'FONT - [true | false]
                 {"underline", "none"},                  'FONT - [none, double, doubleaccount, single]
-                {"underline-single", False},            'FONT - [true, false]
-                {"underline-double", False},            'FONT - [true, false]
-                {"underline-doubleaccount", False},     'FONT - [true, false]
+                {"underline-single", False},            'FONT - [true | false]
+                {"underline-double", False},            'FONT - [true | false]
+                {"underline-doubleaccount", False},     'FONT - [true | false]
                 {"text-align", "start"},                'ALIGNMENT - [none, start, end, center, justify]
                 {"vertical-align", "top"},              'ALIGNMENT - [none, top, middle, bottom]
-                {"text-wrap", False},                   'ALIGNMENT - [true, false]
+                {"text-wrap", False},                   'ALIGNMENT - [true | false]
                 {"number-format", "General"},           'NUMBER FORMAT - [@ = text, General, Estándar, 'for:mat0 personalizad0']    Otros formatos, consultar este link: https://support.microsoft.com/es-es/office/c%C3%B3digos-de-formato-de-n%C3%BAmero-5026bbd6-04bc-48cd-bf33-80f18b4eae68?ui=es-es&rs=es-hn&ad=us
                 {"background-color", "none"}            'FILL - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
             }
@@ -99,7 +106,7 @@ Public Class Dictionary
     ''' Diccionario de datos para los Tipos de Bordes
     ''' Info: https://learn.microsoft.com/es-es/dotnet/api/microsoft.office.interop.excel.border.linestyle?view=excel-pia
     ''' </summary>
-    Public Shared BorderTypes As New Dictionary(Of String, Short) From {
+    Public Shared BorderStyles As New Dictionary(Of String, Short) From {
             {"continuous", xlContinuous},
             {"solid", xlContinuous},        'css
             {"dash", xlDash},
@@ -150,7 +157,7 @@ Public Class Dictionary
     ''' Diccionario de datos para los Tipos de Subrayados
     ''' Info: https://learn.microsoft.com/en-us/office/vba/api/excel.xlunderlinestyle
     ''' </summary>
-    Public Shared UnderlineTypes As New Dictionary(Of String, Short) From {
+    Public Shared UnderlineStyles As New Dictionary(Of String, Short) From {
             {"double", xlUnderlineStyleDouble},
             {"doubleaccount", xlUnderlineStyleDoubleAccounting},
             {"single", xlUnderlineStyleSingle},
