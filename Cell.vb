@@ -3,8 +3,8 @@ Imports System.Drawing
 
 Public Class Cell
 #Region "Parámetros"
-    Public XlsApp As Microsoft.Office.Interop.Excel.Application
     Public infoSheet As DataWorksheet
+    Public XlsApp As Microsoft.Office.Interop.Excel.Application    'Si es Nothing se reasigna en Cell() version 2
 #End Region
 
 #Region "Constantes"
@@ -69,6 +69,11 @@ Public Class Cell
     ''' <param name="Cell_Final"></param>
     ''' <param name="Configurations"></param>
     Public Sub Cell(ByVal Value As String, ByVal Cell_Init As String, Cell_Final As String, ByVal Optional Configurations As String = "")
+        'Valida si se asigna directamente en la instancia o si no lo toma desde infoSheet, si está asignado
+        If (XlsApp Is Nothing) Then
+            XlsApp = infoSheet.XlsApp
+        End If
+
         With XlsApp.Worksheets(infoSheet.SheetName)
             Dim IsMerge As Boolean = True       'es celda convinada?
 
@@ -109,7 +114,7 @@ Public Class Cell
 
             If Value IsNot Nothing Then
                 '--------Es o no Fórmula(si tiene el signo "=" al inicio(index 0) => sí)
-                If (Value.IndexOf("=") = 0) Then
+                If Value.IndexOf("=") = 0 Then
                     .Range(_rangeValue).FormulaLocal = Value
                 Else
                     .Range(_rangeValue).Value = Value
@@ -368,6 +373,7 @@ Public Class Cell
                     CellRange.Font.ColorIndex = FillType(_CellConfig("color"), "color-palette")
                 End If
             End If
+            CellRange.Font.Strikethrough = FontStyleType(_CellConfig("font-style"), "strikethrough", _CellConfig)
 
             'ALIGNMENT
             CellRange.HorizontalAlignment = AlignmentType(_CellConfig("text-align"))
@@ -461,18 +467,22 @@ Public Class Cell
             '====>UNDERLINE
             If type = "underline" Then
                 Dim underlineTypeList As New List(Of String)
-                For Each ut In Dictionary.UnderlineStyles.Keys
-                    underlineTypeList.Add($"underline-{ut}")
+                For Each us In Dictionary.UnderlineStyles.Keys
+                    underlineTypeList.Add($"underline-{us}")
                 Next
 
                 'valuekey única en el key ::: font-style: underline | font-style: underline-single | font-style: underline-double | font-style: underline-doubleaccount
-                If underlineTypeList.Contains(keyValue) Or keyValue = "underline" Then
+                If underlineTypeList.Contains(keyValue) Or keyValue = "underline" Or keyValue = "solid" Then
                     _CellConfig(If(keyValue = "underline", "underline-single", keyValue)) = True
                 End If
 
                 '<> underline: none => underline: single | underline: double | underline: doubleaccount
                 If _CellConfig("underline") <> "none" Then
                     _keyName = _CellConfig("underline")
+                End If
+
+                If _CellConfig("text-decoration-style") <> "none" Then
+                    _keyName = _CellConfig("text-decoration-style")
                 End If
 
                 'font-style: ... underline-single | font-style: ... underline-double | font-style: ... underline-doubleaccount
@@ -492,6 +502,21 @@ Public Class Cell
 
             End If
             '=========================================
+
+            '====>STRIKETHROUGH
+            If type = "strikethrough" Then
+                'font-style: strikethrough | font-style: line-through
+                If keyValue = "strikethrough" Or keyValue = "line-through" Then
+                    _CellConfig("strikethrough") = True
+                End If
+
+                'text-decoration-line: strikethrough | text-decoration-line: line-through
+                If _CellConfig("text-decoration-line") = "strikethrough" Or _CellConfig("text-decoration-line") = "line-through" Then
+                    _CellConfig("strikethrough") = True
+                End If
+
+                result = _CellConfig("strikethrough")
+            End If
 
         End If
 
@@ -587,7 +612,7 @@ Public Class Cell
     Private Shared Function GetKeyConfigDefaultValue(keyConfig As String, key As String) As String
         Dim result As String = Nothing
         'UNDERLINE
-        If key = "font-style" Then
+        If key = "font-style" Or key = "text-decoration-line" Then
             If keyConfig = "underline" Then
                 result = "single"
             Else
@@ -596,6 +621,19 @@ Public Class Cell
         End If
 
         Return result
+    End Function
+
+    ''' <summary>
+    ''' Busca el valor original con el pseudonombre en el Diccionario de Equivalencias si existe, si no retorna el mismo valor
+    ''' </summary>
+    ''' <param name="keyConfig"></param>
+    ''' <param name="key"></param>
+    ''' <returns></returns>
+    Private Shared Function GetKeyEquivalence(keyConfig As String, key As String) As String
+        Return If(Dictionary.KeyEquivalences.ContainsKey(keyConfig),
+                  Dictionary.KeyEquivalences(keyConfig),
+                  keyConfig
+        )
     End Function
 
     Private Shared Sub LexicalKey(key As String, value As String, _CellConfig As Dictionary(Of String, String), ConfigStringsDictionary As Dictionary(Of String, String))
@@ -683,7 +721,7 @@ Public Class Cell
 
                     'ignorar el valor de parámetro none
                     If _valueKeyConfig <> "none" Then
-                        Dim type As String = GetBorderParameter(_valueKeyConfig)
+                        Dim type As String = GetBorderParameterType(_valueKeyConfig)
                         If type = "width" Then
                             If Not repeatWidth Then
                                 repeatWidth = True
@@ -718,7 +756,7 @@ Public Class Cell
 
                     'ignorar el valor de parámetro none
                     If _valueKeyConfig <> "none" Then
-                        Dim type As String = GetBorderParameter(_valueKeyConfig)
+                        Dim type As String = GetBorderParameterType(_valueKeyConfig)
                         If type = "style" Then
                             If Not repeatStyle Then
                                 _CellConfig($"{key}-{type}") = _valueKeyConfig
@@ -808,7 +846,7 @@ Public Class Cell
                 keyConfig = Trim(keyConfig)
                 keyConfig = If(ConfigStringsDictionary.ContainsKey(keyConfig), ConfigStringsDictionary(keyConfig), keyConfig)
                 keyConfig = Replace(Replace(keyConfig, """", ""), "'", "")            'esta cadena de texto no soporta " (comillas dobles) ni '(comillas sencillas) porque hacemos un replace sobre ella, en caso que se necesite, edítalo
-
+                keyConfig = GetKeyEquivalence(keyConfig, key)  'si es un pseudonombre que no existe en el diccionario, entonces buscar su nombre original
                 'Hacer aquí el procedimiento de MULTIPLES CONFIGURACIONES (éstas keyConfig mayormente son True, False)
                 If _CellConfig.ContainsKey(keyConfig) Then
                     _CellConfig(keyConfig) = GetKeyConfigDefaultValue(keyConfig, key)
@@ -820,7 +858,12 @@ Public Class Cell
         End If
     End Sub
 
-    Private Shared Function GetBorderParameter(valueKeyConfig As String) As Object
+    ''' <summary>
+    ''' Obtiene el tipo de Parámetro del borde (width | style | color) desde el valor ingresado
+    ''' </summary>
+    ''' <param name="valueKeyConfig"></param>
+    ''' <returns></returns>
+    Private Shared Function GetBorderParameterType(valueKeyConfig As String) As Object
         Dim parameter As String = ""
         Dim regxARGB As String = "^(a?rgb)?\(?([01]?\d\d?|2[0-4]\d|25[0-5])(\W+)([01]?\d\d?|2[0-4]\d|25[0-5])\W+(([01]?\d\d?|2[0-4]\d|25[0-5])\)?)$"
 
@@ -845,6 +888,7 @@ Public Class Cell
     ''' DataWorksheet - Datos de la Hoja de Trabajo
     ''' </summary>
     Public Class DataWorksheet
+        Public XlsApp As Microsoft.Office.Interop.Excel.Application = Nothing     'Aplicación de Excel a la que pertenece
         Public PositionRow As Short     'Posición de la fila en uso
         Public SheetName As String      'Nombre de la hoja
     End Class

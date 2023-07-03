@@ -81,14 +81,17 @@ Public Class Dictionary
                 {"border-inside-vertical-color", "none"},       'BORDER COLOR - (namecolor | hexdecimal | rgb) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
                 {"font-size", 12},                      'FONT - Tamaño de letra en número
                 {"font-family", "Calibri"},             'FONT - [Arial, San Serif, Helvetica, Calibri, ...] (múltiples opciones, con orden de existencia, separados por una coma)
-                {"font-style", "normal"},               'FONT - [normal, bold, italic, underline] (multiples configuraciones separados por un espacio)                     
+                {"font-style", "normal"},               'FONT - [normal | bold | italic | underline | underline-single | underline-double | underline-doubleaccount, strikethrough (line-through)] (multiples configuraciones separados por un espacio; a diferencia de css, éste maneja otros valores clave)        https://developer.mozilla.org/en-US/docs/Web/CSS/font-style
                 {"color", "none"},                      'FONT - (namecolor, hexdecimal format, rgb format) - examples [green, white, black, blue, #fff, #ffffff, rgb(255,255,255)]
                 {"italic", False},                      'FONT - [true | false]
                 {"bold", False},                        'FONT - [true | false]
-                {"underline", "none"},                  'FONT - [none, double, doubleaccount, single]
-                {"underline-single", False},            'FONT - [true | false]
-                {"underline-double", False},            'FONT - [true | false]
-                {"underline-doubleaccount", False},     'FONT - [true | false]
+                {"underline", "none"},                  'FONT - [none | double | doubleaccount | single(solid) ]
+                {"underline-single", False},            'FONT UNDERLINE - [true | false]
+                {"underline-double", False},            'FONT UNDERLINE - [true | false]
+                {"underline-doubleaccount", False},     'FONT UNDERLINE - [true | false]
+                {"strikethrough", False},               'FONT UNDERLINE - [true | false]    'Tachado
+                {"text-decoration-style", "none"},      'FONT UNDERLINE - [none | double | doubleaccount | single(solid) ] https://developer.mozilla.org/en-US/docs/Web/CSS/text-decoration-style
+                {"text-decoration-line", "none"},       'FONT UNDERLINE - [none | underline | strikethrough(line-through) ]  https://developer.mozilla.org/en-US/docs/Web/CSS/text-decoration-line
                 {"text-align", "start"},                'ALIGNMENT - [none, start, end, center, justify]
                 {"vertical-align", "top"},              'ALIGNMENT - [none, top, middle, bottom]
                 {"text-wrap", False},                   'ALIGNMENT - [true | false]
@@ -161,6 +164,7 @@ Public Class Dictionary
             {"double", xlUnderlineStyleDouble},
             {"doubleaccount", xlUnderlineStyleDoubleAccounting},
             {"single", xlUnderlineStyleSingle},
+            {"solid", xlUnderlineStyleSingle},      'css
             {"none", xlUnderlineStyleNone}          'default
     }
 #End Region
@@ -247,6 +251,18 @@ Public Class Dictionary
         {"yellow", 6},
         {"automatic", xlColorIndexAutomatic},
         {"none", xlColorIndexNone}
+    }
+#End Region
+
+#Region "Diccionarios-MIXED"
+    ''' <summary>
+    ''' Diccionario de equivalencias de palabras clave
+    ''' key = key used
+    ''' value = equivalence
+    ''' </summary>
+    Public Shared KeyEquivalences As New Dictionary(Of String, String) From {
+        {"underline", "underline-single"},
+        {"line-through", "strikethrough"}
     }
 #End Region
 End Class

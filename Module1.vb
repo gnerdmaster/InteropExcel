@@ -4,6 +4,7 @@
         Dim ExcelApp = New Microsoft.Office.Interop.Excel.Application
         Dim Book = ExcelApp.Workbooks.Add
         Dim infoSheet As New Cell.DataWorksheet
+        infoSheet.XlsApp = ExcelApp     '1.- manera 1 en asignar la Aplicación
         infoSheet.PositionRow = 1
         infoSheet.SheetName = "Hoja1"
 
@@ -11,7 +12,7 @@
 
 
         Dim C As New Cell
-        C.XlsApp = ExcelApp
+        C.XlsApp = ExcelApp     '2.- manera 2 en asignar la Aplicación
         C.infoSheet = infoSheet
 
         Const test As Boolean = False
@@ -113,6 +114,19 @@
             C.Cell("font-style: underline italic", "I10", "font-style: underline italic bold")
             C.Cell("font-style: underline-double bold italic", "I11", "font-style: underline-double bold italic")
 
+            '---------STRIKETHROUGH - FUENTE DE LETRA TACHADA---------------
+            C.Cell("font-style: strikethrough", "I13", "font-style: strikethrough")
+            C.Cell("font-style: line-through", "I14", "font-style: line-through")
+            C.Cell("font-style: strikethrough italic", "I15", "font-style: strikethrough italic")
+            C.Cell("font-style: line-through bold", "I16", "font-style: line-through bold")
+            C.Cell("strikethrough: True", "I17", "strikethrough: True")
+            C.Cell("text-decoration-line: strikethrough", "I18", "text-decoration-line: strikethrough")
+            C.Cell("text-decoration-line: line-through", "I19", "text-decoration-line: line-through")
+            C.Cell("text-decoration-line: strikethrough underline", "I20", "text-decoration-line: strikethrough underline")
+            C.Cell("text-decoration-line: line-through underline", "I21", "text-decoration-line: line-through underline")
+            C.Cell("text-decoration-line: line-through underline-double", "I22", "text-decoration-line: line-through underline-double")
+            C.Cell("text-decoration-style: solid", "I23", "text-decoration-style: solid")
+
             '------------ONLY FORMAT WITHIN VALUE | MERGE OR NOT MERGE RANGE
             '' <> Not Merge within inside borders (no se muestra ningún borde interno aunque tenga configuración personalizada)
             '' <i> Not Merge with inside borders (si no tiene declarado el tipo de borde toma por default los de border-bottom(border-inside-horizontal) y border-right(border-inside-vertical))
@@ -133,9 +147,10 @@
         End If
 
 
+
         'Siguientes mejoras:
         '3.- HTML dentro de la celda
-        '4.- Controlar el grosor de los bordes (listo)
+        '---->4.- Controlar el grosor de los bordes (listo) no logra soportar "dashed thick" guiones supergruesos
         '5.- Orientación de Texto
         '6.- Sangría de Texto
         '7.- Reducir Hasta ajustar(texto)
@@ -148,10 +163,10 @@
 
 
         'Siguientes propuestas
-        '1.- Dividir texto en varias fracciones de celda (para evitar textos extensos y que no quepan en una celda de excel)
-        '2.- Hacer un procedimiento para creación de tablas preconfiguradas(desde títulos de columnas hasta la información que pinte desde una fuente de datos)
-        '2.1.- Hacer que esta tabla pintada sea una tipo tabla que se puedan configurar filtros, formatos de pintado, tablas dinámicas, funciones, etc.
-        '3.- Dar formato a nivel caracteres(ej. caracteres en diferentes colores y/o fuentes de letras)
+        '1.- (NIVEL CELDA) Dividir texto en varias fracciones de celda (para evitar textos extensos y que no quepan en una celda de excel)
+        '2.- (NIVEL TABLA) Hacer un procedimiento para creación de tablas preconfiguradas(desde títulos de columnas hasta la información que pinte desde una fuente de datos)
+        '2.1.- (NIVEL TABLA) Hacer que esta tabla pintada sea una tipo tabla que se puedan configurar filtros, formatos de pintado, tablas dinámicas, funciones, etc.
+        '3.- (NIVEL CELDA) Dar formato a nivel caracteres(ej. caracteres en diferentes colores y/o fuentes de letras)
         '4.- Programar una macro XD
         '5.- Insertar gráficos
         '6.- Insertar Ilustraciones (Imágenes, Formas, Íconos, Modelos 3D, etc.)
