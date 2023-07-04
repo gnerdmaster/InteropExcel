@@ -8,14 +8,14 @@
         infoSheet.PositionRow = 1
         infoSheet.SheetName = "Hoja1"
 
-        'Libro.Sheets(1).Cells(1, 1).RichText.Substring(startindex, noofchar).SetFontColor(XLColor.Red) ' = "Hola Mundo" 'https://www.codeproject.com/Questions/1130851/How-to-make-different-colors-of-texts-in-same-exce    'Ejemplo básico
+        'ExcelApp.Worksheets(1).Cells(1, 1).RichText.Substring(1, 5).SetFontColor(RGB(125, 125, 125)) ' = "Hola Mundo" 'https://www.codeproject.com/Questions/1130851/How-to-make-different-colors-of-texts-in-same-exce    'Ejemplo básico
 
-
+        'Instanciar la clase Cell para asignar la aplicación (XlsApp) y la información necesario de la hoja(infoSheet)
         Dim C As New Cell
         C.XlsApp = ExcelApp     '2.- manera 2 en asignar la Aplicación
         C.infoSheet = infoSheet
 
-        Const test As Boolean = False
+        Const test As Boolean = False        'False = entra en el if, True = Ignora el contenido del if
         If Not test Then
 
 
@@ -33,13 +33,18 @@
             ''----------ALINEACIONES------------
             C.Cell("TEST ALIGNMENT", "B9:E9", "text-align: center; vertical-align:none")
 
+            ''REDUCIR TEXTO PARA AJUSTAR (shrink-to-fit)
+            C.Cell("shrink-to-fit:true(encoge contenido)", "b10", "shrink-to-fit:true")
+            C.Cell("shrink:true(encoge contenido)", "b11", "shrink:true")
+            C.Cell("shrinktofit:true", "b12", "shrinktofit:true")
+
             ''----------FÓRMULAS----------------
-            C.Cell("=CONCAT(""TEST"", "" PARA UNA FUNCIÓN"")", "B11")       'fórmula CONCAT sin formato y en una sola celda
-            C.Cell("=CONCAT(""TEST"", "" PARA UNA FUNCIÓN EN CELDA CONVINADA"")", "B12:D14")       'fórmula CONCAT sin formato y en una celda convinada con otras
+            C.Cell("=CONCAT(""TEST"", "" PARA UNA FUNCIÓN"")", "B13")       'fórmula CONCAT sin formato y en una sola celda
+            C.Cell("=CONCAT(""TEST"", "" PARA UNA FUNCIÓN EN CELDA CONVINADA"")", "B14:D14")       'fórmula CONCAT sin formato y en una celda convinada con otras
 
             Dim wraptext As String = "WrapText - Este es un test de un texto demasiado largo, y tiene que pasar la prueba de Wrap text = Ajustar texto"
             Dim wraptextConfig As String = "text-wrap:true"
-            C.Cell(wraptext, "B16:D18", wraptextConfig)
+            C.Cell(wraptext, "B15:D18", wraptextConfig)
 
             Dim textjustify As String = "Text Justify - Prueba de justificación de texto, tenemos que asegurarnos por si no jala, entonces tendríamos que volver a programar lo que ya programamos en lo programado en la programación de la redundación y la atareación"
             C.Cell(textjustify, "B20:D22", "text-align:justify")
@@ -147,19 +152,19 @@
         End If
 
 
-
         'Siguientes mejoras:
         '3.- HTML dentro de la celda
         '---->4.- Controlar el grosor de los bordes (listo) no logra soportar "dashed thick" guiones supergruesos
         '5.- Orientación de Texto
         '6.- Sangría de Texto
         '7.- Reducir Hasta ajustar(texto)
-        '8.- (Fuente) Efecto tachado 
+        '---->8.- (Fuente) Efecto tachado (listo strikthrough)
         '9.- (Fuente) Efecto Superíndice
         '10.- (Fuente) Efecto Subíndice
         '11.- (Color Fondo) Efectos de relleno, Color de Trama, Estilo de Trama
         '12.- Sección Proteger (Bloqueada, Oculta)
-        '14.- Ajustar interpretación del key border y sus derivados para apegarse a css (listo border y sus derivados)
+        '---->14.- Ajustar interpretación del key border y sus derivados para apegarse a css (listo border y sus derivados)
+        '15.- Estandarizar font-size https://www.freecodecamp.org/espanol/news/tamano-de-fuente-html-como-cambiar-el-tamano-del-texto-usando-el-estilo-css-en-linea/#:~:text=C%C3%B3mo%20cambiar%20el%20tama%C3%B1o%20del%20texto%20usando%20CSS%20en%20l%C3%ADnea,y%20luego%20as%C3%ADgnale%20un%20valor.
 
 
         'Siguientes propuestas
