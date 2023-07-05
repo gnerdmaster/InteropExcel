@@ -652,6 +652,10 @@ Public Class Cell
             Next
 
             'FONTS
+            If _CellConfig("text-transform") <> "none" Then
+                CellRange.Value = GetTextTransform(CellRange.Value, _CellConfig("text-transform"))
+            End If
+
             CellRange.Font.Name = _CellConfig("font-family")
             CellRange.Font.Bold = FontStyleType(_CellConfig("font-style"), "bold", _CellConfig) 'Boolean.Parse(If(_CellConfig("font-style") = "bold", True, _CellConfig("bold")))
             CellRange.Font.Italic = FontStyleType(_CellConfig("font-style"), "italic", _CellConfig)  'Boolean.Parse(If(_CellConfig("font-style") = "italic", True, _CellConfig("italic")))
@@ -875,6 +879,26 @@ Public Class Cell
             Case Else
                 Return value    'formato personalizado en un string. Ej. "$##.##"
         End Select
+    End Function
+
+    ''' <summary>
+    ''' Obtiene el texto transformado en 
+    ''' uppercase | lowercase | capitalize | value 
+    ''' --> si el keyValue no es el correcto o es none entonces regrese el mismo valor
+    ''' </summary>
+    ''' <param name="value"></param>
+    ''' <param name="keyValue"></param>
+    ''' <returns></returns>
+    Private Shared Function GetTextTransform(value As String, keyValue As String) As String
+        If keyValue = "uppercase" Then     'convertir en MAYÚSCULAS
+            value = UCase(value)
+        ElseIf keyValue = "lowercase" Then 'convertir en minúsculas
+            value = LCase(value)
+        ElseIf keyValue = "capitalize" Then    'Capitalizar El Texto
+            value = StrConv(value, vbProperCase)
+        End If
+
+        Return value
     End Function
 
 #End Region

@@ -92,6 +92,7 @@ Public Class Dictionary
                 {"strikethrough", False},               'FONT UNDERLINE - [true | false]    'Tachado
                 {"text-decoration-style", "none"},      'FONT UNDERLINE - [none | double | doubleaccount | single(solid) ] https://developer.mozilla.org/en-US/docs/Web/CSS/text-decoration-style
                 {"text-decoration-line", "none"},       'FONT UNDERLINE - [none | underline | strikethrough(line-through) ]  https://developer.mozilla.org/en-US/docs/Web/CSS/text-decoration-line
+                {"text-transform", "none"},             'FONT TRANSFORM - [none | uppercase | lowercase | capitalize]
                 {"shrink-to-fit", False},               'ALIGNMENT - [true | false} (Reducir hasta ajustar)
                 {"text-align", "start"},                'ALIGNMENT - [none, start, end, center, justify]
                 {"vertical-align", "top"},              'ALIGNMENT - [none, top, middle, bottom]

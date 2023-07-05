@@ -146,10 +146,20 @@
             C.Cell("color: #0E2FC3", "M3", "color: #0E2FC3")
             C.Cell("color: rgb(174, 241, 71)", "M4", "color: rgb(174, 241, 71)")
 
+            ''---------UPPERCASE & LOWERCASE------
+            C.Cell("tExT-tRaNsFoRm: none", "n1", "text-transform: none")
+            C.Cell("tExT-tRaNsFoRm: uppercase", "n2", "text-transform: uppercase")
+            C.Cell("tExT-tRaNsFoRm: lowercase", "n3", "text-transform: lowercase")
+            C.Cell("tExT-tRaNsFoRm: capitalize", "n4", "text-transform: capitalize")
+
             ''-----------RICH TEXT (HTML EN LA CELDA)----------
             'C.Cell("<h>Hola mundo</h><u>underline</u> HTML en <b>TODOS lados</b>", "L2:M2") --pendiente
             ''-----------CELL VERSIÓN 4 (CREACIÓN DE UNA TABLA)
         End If
+
+
+
+
 
 
         'Siguientes mejoras:
@@ -157,7 +167,7 @@
         '---->4.- Controlar el grosor de los bordes (listo) no logra soportar "dashed thick" guiones supergruesos
         '5.- Orientación de Texto
         '6.- Sangría de Texto
-        '7.- Reducir Hasta ajustar(texto)
+        '---->7.- Reducir Hasta ajustar(texto)  (listo)
         '---->8.- (Fuente) Efecto tachado (listo strikthrough)
         '9.- (Fuente) Efecto Superíndice
         '10.- (Fuente) Efecto Subíndice
@@ -165,6 +175,7 @@
         '12.- Sección Proteger (Bloqueada, Oculta)
         '---->14.- Ajustar interpretación del key border y sus derivados para apegarse a css (listo border y sus derivados)
         '15.- Estandarizar font-size https://www.freecodecamp.org/espanol/news/tamano-de-fuente-html-como-cambiar-el-tamano-del-texto-usando-el-estilo-css-en-linea/#:~:text=C%C3%B3mo%20cambiar%20el%20tama%C3%B1o%20del%20texto%20usando%20CSS%20en%20l%C3%ADnea,y%20luego%20as%C3%ADgnale%20un%20valor.
+        '16.- Uppercase, lowercase
 
 
         'Siguientes propuestas
